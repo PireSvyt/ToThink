@@ -1,0 +1,16 @@
+{
+  "short_name": "ToThink©",
+  "name": "ToThink© webapp",
+  "description": "ToThink is a webapp enabling to manage todos by thinking first.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "lang": "fr",
+  "author": "SAVOYAT Pierre"
+}
