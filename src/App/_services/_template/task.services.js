@@ -31,7 +31,7 @@ export async function serviceTaskDelete(directInputs) {
     taskid: directInputs.taskid,
     patientid: directInputs.patientid,
   }*/
-  await serviceProceed(taskDeleteInputs, directInputs)
+  await serviceProceed(taskDeleteInputs, inputs)
 }
 
 export async function serviceTaskGetOne(directInputs) {

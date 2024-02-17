@@ -19,7 +19,7 @@ export const taskCreateInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/lock',
+      type: 'taskSlice/storingResults',
     })
   },
   unlockuifunction: (log) => {
@@ -29,7 +29,7 @@ export const taskCreateInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/unlock',
+      type: 'taskSlice/storedResults',
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -38,7 +38,7 @@ export const taskCreateInputs = {
       message: 'taskCreateInputs.getinputsfunction',
       tags: ['function'],
     })
-    return { inputs: appStore.getState().taskModalSlice.inputs }
+    return {...directInputs}
   },
   sercivechecks: [
     {
@@ -47,17 +47,43 @@ export const taskCreateInputs = {
       error: 'generic.error.missinginputs',
       subchecks: [
         {
-          // Check name is available
-          field: 'name',
-          error: 'generic.error.missingname',
-          fieldsinerror: ['name'],
+          // Check type is available
+          field: 'type',
+          error: 'generic.error.missingtype',
+          fieldsinerror: ['type'],
+          subchecks: [
+            {
+              // Check type is valid
+              error: 'generic.error.invalidtype',
+              fieldsinerror: ['type'],
+              checkfunction: (serviceInputs) => {
+                console.log(
+                  'sercivechecks.checkfunction serviceInputs',
+                  serviceInputs
+                )
+                if (serviceInputs.inputs.type === '') {
+                  return {
+                    errors: ['generic.error.invalidtype'],
+                    stateChanges: {
+                      errors: {
+                        type: true,
+                      },
+                    },
+                    proceed: false,
+                  }
+                } else {
+                  return { proceed: true }
+                }
+              },
+            },
+          ],
         },
-        /*{
-          // Check description is available
-          field: 'description',
-          error: 'generic.error.missingdescription',
-          fieldsinerror: ['description'],
-        },*/
+        {
+          // Check results is available
+          field: 'results',
+          error: 'generic.error.missingresults',
+          fieldsinerror: ['results'],
+        },
       ],
     },
   ],
@@ -67,7 +93,23 @@ export const taskCreateInputs = {
       message: 'taskCreateInputs.getcheckoutcomedispatchfunction',
       tags: ['function'],
     })
-    return 'taskModalSlice/change'
+    return 'taskSlice/change'
+  },
+  repackagingfunction: (serviceInputs, log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskCreateInputs.repackagingfunction',
+      tags: ['function'],
+    })
+
+    let repackagedInputs = {}
+    repackagedInputs.inputs = {}
+    repackagedInputs.inputs.taskid = random_string()
+    repackagedInputs.inputs.patientid = appStore.getState().taskSlice.patientid
+    repackagedInputs.inputs.type = serviceInputs.inputs.type
+    repackagedInputs.inputs.results = serviceInputs.inputs.results
+    console.log('repackagedInputs', repackagedInputs)
+    return repackagedInputs
   },
   apicall: async (inputs, log) => {
     console.log('apicall inputs', inputs)
@@ -92,18 +134,22 @@ export const taskCreateInputs = {
     })
     let responses = {
       'task.create.success': () => {
-        // add task to store
         appStore.dispatch({
-          type: 'taskSlice/change',
+          type: 'taskSlice/storedResults',
           payload: {
-            task: response.data.task
+            taskid: response.data.taskid
           }
-        })
-        appStore.dispatch({
-          type: 'taskModalSlice/close',
         })
       },
       'task.create.error.oncreate': () => {
+        appStore.dispatch({
+          type: 'taskSlice/change',
+          payload: {
+            state: {
+              storage: 'error'
+            }
+          }
+        })
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -119,107 +165,6 @@ export const taskCreateInputs = {
 }
 
 export const taskUpdateInputs = {
-  /*lockuifunction: (log) => {
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.lockuifunction',
-      tags: ['function'],
-    })
-    appStore.dispatch({
-      type: 'taskModalSlice/lock',
-    })
-  },
-  unlockuifunction: (log) => {
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.unlockuifunction',
-      tags: ['function'],
-    })
-    appStore.dispatch({
-      type: 'taskModalSlice/unlock',
-    })
-  },*/
-  getinputsfunction: (log, directInputs) => {
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.getinputsfunction',
-      tags: ['function'],
-    })
-    return { inputs: directInputs }
-  },
-  sercivechecks: [
-    {
-      // Check inputs root is available
-      field: 'inputs',
-      error: 'generic.error.missinginputs',
-      subchecks: [
-        {
-          // Check name is available
-          field: 'taskid',
-          error: 'generic.error.missingtaskid',
-          fieldsinerror: ['taskid'],
-        },
-        /*{
-          // Check description is available
-          field: 'description',
-          error: 'generic.error.missingdescription',
-          fieldsinerror: ['description'],
-        },*/
-      ],
-    },
-  ],
-  getcheckoutcomedispatchfunction: (log) => {
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.getcheckoutcomedispatchfunction',
-      tags: ['function'],
-    })
-    return 'taskSlice/change'
-  },
-  apicall: async (inputs, log) => {
-    console.log('apicall inputs', inputs)
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.apicall',
-      inputs: inputs,
-      tags: ['function'],
-    })
-    try {
-      return await apiTaskUpdate(inputs, appStore.getState().authSlice.token)
-    } catch (err) {
-      return err
-    }
-  },
-  getmanageresponsefunction: (response, log) => {
-    log.push({
-      date: new Date(),
-      message: 'taskUpdateInputs.getmanageresponsefunction',
-      response: response,
-      tags: ['function'],
-    })
-    let responses = {
-      'task.update.success.modified': () => {
-        // add task to store
-        appStore.dispatch({
-          type: 'taskSlice/change',
-          payload: {
-            task: response.data.task
-          }
-        })
-      },
-      'task.update.error.onmodify': () => {
-        appStore.dispatch({
-          type: 'sliceSnack/change',
-          payload: {
-            uid: random_id(),
-            id: 'generic.snack.error.wip',
-          },
-        })
-      },
-    }
-    //console.log("taskUpdateInputs response", response)
-    return responses[response.type]()
-  },
 }
 
 export const taskDeleteInputs = {

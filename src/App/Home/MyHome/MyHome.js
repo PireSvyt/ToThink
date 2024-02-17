@@ -15,9 +15,6 @@ export default function MyHome() {
   const { t } = useTranslation()
 
   return (
-    <Box
-    >
-      <MyActivities/>
-    </Box>
+    <MyActivities/>
   )
 }

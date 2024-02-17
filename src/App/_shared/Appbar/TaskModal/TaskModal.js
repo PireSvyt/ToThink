@@ -10,6 +10,8 @@ import {
   DialogTitle,
   FormControl,
   Typography,
+  MenuItem,
+  Select
 } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useSelector } from 'react-redux'
@@ -36,6 +38,7 @@ export default function TaskModal() {
     loading: useSelector((state) => state.taskModalSlice.loading),
     inputs: useSelector((state) => state.taskModalSlice.inputs),
     errors: useSelector((state) => state.taskModalSlice.errors),
+    activities: useSelector((state) => state.activitySlice.activities),
   }
 
   // Changes
@@ -58,11 +61,26 @@ export default function TaskModal() {
         },
       })
     },
+    activityid: (e) => {
+      appStore.dispatch({
+        type: 'taskModalSlice/change',
+        payload: {
+          inputs: {
+            activityid: e.target.value,
+          },
+          errors: {
+            activityid: false,
+          },
+        },
+      })
+    },
     create: () => {
       console.log('TaskModal.create')
       serviceTaskCreate()
     },
   }
+
+let c = -1
 
   // Render
   return (
@@ -99,6 +117,35 @@ export default function TaskModal() {
                 error={select.errors.name}
                 data-testid="modal-task#input-name"
               />
+              
+              <Select
+                name="activityid"
+                required
+                label={t('generic.input.activity')}
+                variant="standard"
+                value={select.inputs.activityid}
+                onChange={changes.activityid}
+                error={select.errors.activityid}
+                data-testid="modal-task#input-activityid"
+              >
+                <MenuItem 
+                  value=""
+                  key={"act-"+""}
+                >
+                  <em>{t('generic.label.none')}</em>
+                </MenuItem>
+                {Object.entries(select.activities).map(activity => {
+                  c += 1
+                  return (
+                    <MenuItem 
+                      value={activity[1].activityid}
+                      key={"act-"+activity[1].activityid}
+                    >
+                      {activity[1].name}
+                    </MenuItem>
+                  )
+                })}
+              </Select>
             </FormControl>
           </Box>
         </DialogContent>

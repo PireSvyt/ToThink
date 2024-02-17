@@ -15,11 +15,14 @@ i18n.use(initReactI18next).init({
     enGB: {
       translations: require('./i18n.enGB.json'),
     },
+    frFR: {
+      translations: require('./i18n.frFR.json'),
+    },
   },
   ns: ['translations'],
   defaultNS: 'translations',
 })
 
-i18n.languages = ['frFR', 'enGB']
+i18n.languages = ['enGB', 'frFR']
 
 export default i18n

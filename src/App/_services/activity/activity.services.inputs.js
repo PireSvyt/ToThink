@@ -19,7 +19,7 @@ export const activityCreateInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'activitySlice/storingResults',
+      type: 'activityModalSlice/lock',
     })
   },
   unlockuifunction: (log) => {
@@ -29,7 +29,7 @@ export const activityCreateInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'activitySlice/storedResults',
+      type: 'activityModalSlice/unlock',
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -38,7 +38,7 @@ export const activityCreateInputs = {
       message: 'activityCreateInputs.getinputsfunction',
       tags: ['function'],
     })
-    return {...directInputs}
+    return { inputs: appStore.getState().activityModalSlice.inputs }
   },
   sercivechecks: [
     {
@@ -47,43 +47,17 @@ export const activityCreateInputs = {
       error: 'generic.error.missinginputs',
       subchecks: [
         {
-          // Check type is available
-          field: 'type',
-          error: 'generic.error.missingtype',
-          fieldsinerror: ['type'],
-          subchecks: [
-            {
-              // Check type is valid
-              error: 'generic.error.invalidtype',
-              fieldsinerror: ['type'],
-              checkfunction: (serviceInputs) => {
-                console.log(
-                  'sercivechecks.checkfunction serviceInputs',
-                  serviceInputs
-                )
-                if (serviceInputs.inputs.type === '') {
-                  return {
-                    errors: ['generic.error.invalidtype'],
-                    stateChanges: {
-                      errors: {
-                        type: true,
-                      },
-                    },
-                    proceed: false,
-                  }
-                } else {
-                  return { proceed: true }
-                }
-              },
-            },
-          ],
+          // Check name is available
+          field: 'name',
+          error: 'generic.error.missingname',
+          fieldsinerror: ['name'],
         },
-        {
-          // Check results is available
-          field: 'results',
-          error: 'generic.error.missingresults',
-          fieldsinerror: ['results'],
-        },
+        /*{
+          // Check description is available
+          field: 'description',
+          error: 'generic.error.missingdescription',
+          fieldsinerror: ['description'],
+        },*/
       ],
     },
   ],
@@ -93,23 +67,7 @@ export const activityCreateInputs = {
       message: 'activityCreateInputs.getcheckoutcomedispatchfunction',
       tags: ['function'],
     })
-    return 'activitySlice/change'
-  },
-  repackagingfunction: (serviceInputs, log) => {
-    log.push({
-      date: new Date(),
-      message: 'activityCreateInputs.repackagingfunction',
-      tags: ['function'],
-    })
-
-    let repackagedInputs = {}
-    repackagedInputs.inputs = {}
-    repackagedInputs.inputs.activityid = random_string()
-    repackagedInputs.inputs.patientid = appStore.getState().activitySlice.patientid
-    repackagedInputs.inputs.type = serviceInputs.inputs.type
-    repackagedInputs.inputs.results = serviceInputs.inputs.results
-    console.log('repackagedInputs', repackagedInputs)
-    return repackagedInputs
+    return 'activityModalSlice/change'
   },
   apicall: async (inputs, log) => {
     console.log('apicall inputs', inputs)
@@ -134,22 +92,18 @@ export const activityCreateInputs = {
     })
     let responses = {
       'activity.create.success': () => {
-        appStore.dispatch({
-          type: 'activitySlice/storedResults',
-          payload: {
-            activityid: response.data.activityid
-          }
-        })
-      },
-      'activity.create.error.oncreate': () => {
+        // add activity to store
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
-            state: {
-              storage: 'error'
-            }
+            activity: response.data.activity
           }
         })
+        appStore.dispatch({
+          type: 'activityModalSlice/close',
+        })
+      },
+      'activity.create.error.oncreate': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -165,6 +119,107 @@ export const activityCreateInputs = {
 }
 
 export const activityUpdateInputs = {
+  /*lockuifunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.lockuifunction',
+      tags: ['function'],
+    })
+    appStore.dispatch({
+      type: 'activityModalSlice/lock',
+    })
+  },
+  unlockuifunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.unlockuifunction',
+      tags: ['function'],
+    })
+    appStore.dispatch({
+      type: 'activityModalSlice/unlock',
+    })
+  },*/
+  getinputsfunction: (log, directInputs) => {
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.getinputsfunction',
+      tags: ['function'],
+    })
+    return { inputs: directInputs }
+  },
+  sercivechecks: [
+    {
+      // Check inputs root is available
+      field: 'inputs',
+      error: 'generic.error.missinginputs',
+      subchecks: [
+        {
+          // Check activityid is available
+          field: 'activityid',
+          error: 'generic.error.missingactivityid',
+          fieldsinerror: ['activityid'],
+        },
+        /*{
+          // Check description is available
+          field: 'description',
+          error: 'generic.error.missingdescription',
+          fieldsinerror: ['description'],
+        },*/
+      ],
+    },
+  ],
+  getcheckoutcomedispatchfunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.getcheckoutcomedispatchfunction',
+      tags: ['function'],
+    })
+    return 'activitySlice/change'
+  },
+  apicall: async (inputs, log) => {
+    console.log('apicall inputs', inputs)
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.apicall',
+      inputs: inputs,
+      tags: ['function'],
+    })
+    try {
+      return await apiActivityUpdate(inputs, appStore.getState().authSlice.token)
+    } catch (err) {
+      return err
+    }
+  },
+  getmanageresponsefunction: (response, log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityUpdateInputs.getmanageresponsefunction',
+      response: response,
+      tags: ['function'],
+    })
+    let responses = {
+      'activity.update.success.modified': () => {
+        // add activity to store
+        appStore.dispatch({
+          type: 'activitySlice/change',
+          payload: {
+            activity: response.data.activity
+          }
+        })
+      },
+      'activity.update.error.onmodify': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+    }
+    //console.log("activityCreateInputs response", response)
+    return responses[response.type]()
+  },
 }
 
 export const activityDeleteInputs = {
@@ -252,7 +307,12 @@ export const activityGetOneInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'activitySlice/loadAnalysis',
+      type: 'activitySlice/change',
+      payload: {
+        state: {
+          getone: 'wip'
+        }
+      }
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -271,16 +331,7 @@ export const activityGetOneInputs = {
       field: 'inputs',
       error: 'activity.error.missinginputs',
       subchecks: [
-        {
-          // Check patientid is available
-          field: 'activityid',
-          error: 'patient.error.missingactivityid',
-        },
-        {
-          // Check patientid is available
-          field: 'patientid',
-          error: 'patient.error.missingpatientid',
-        },
+        
       ],
     },
   ],
@@ -305,34 +356,153 @@ export const activityGetOneInputs = {
       tags: ['function'],
     })
     let responses = {
-      'activity.getanalysis.success': () => {
+      'activity.getone.success': () => {
         appStore.dispatch({
-          type: 'activitySlice/setAnalysis',
-          payload: response.data.activity,
+          type: 'activitySlice/change',
+          payload: {
+            activity: response.data.activity,
+            state: {
+              getone: 'available'
+            }
+          }
         })
       },
-      'activity.getanalysis.error.undefined': () => {
-        console.warn("getmanageresponsefunction activity.getanalysis.error.undefined")
+      'activity.getone.error.undefined': () => {
+        console.warn("getmanageresponsefunction activity.getone.error.undefined")
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              analysis: 'denied'
+              getone: 'available'
             }
           },
         })
-      },
-      'activity.getanalysis.error.onfind': () => {
-        console.warn("getmanageresponsefunction activity.getanalysis.error.onfind")
         appStore.dispatch({
-          type: 'activitySlice/setAnalysis',
+          type: 'sliceSnack/change',
           payload: {
-            type: 'activitySlice/change',
-            payload: {
-              state: {
-                analysis: 'denied'
-              }
-            },
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+      'activity.getone.error.onfind': () => {
+        console.warn("getmanageresponsefunction activity.getone.error.onfind")
+        appStore.dispatch({
+          type: 'activitySlice/change',
+          payload: {
+            state: {
+              getone: 'available'
+            }
+          },
+        })
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+    }
+    //console.log("WHAT IS THE response.type : " + response.type)
+    return responses[response.type]()
+  },
+}
+
+export const activityGetManyInputs = {
+  lockuifunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityGetManyInputs.lockuifunction',
+      tags: ['function'],
+    })
+    appStore.dispatch({
+      type: 'activitySlice/change',
+      payload: {
+        state: {
+          getmany: 'wip'
+        }
+      }
+    })
+  },
+  getinputsfunction: (log, directInputs) => {
+    log.push({
+      date: new Date(),
+      message: 'activityGetManyInputs.getinputsfunction',
+      tags: ['function'],
+    })
+    return {
+      inputs: {...directInputs},
+    }
+  },
+  sercivechecks: [
+    /*{
+      // Check inputs root is available
+      field: 'inputs',
+      error: 'activity.error.missinginputs',
+      subchecks: [
+        
+      ],
+    },*/
+  ],
+  apicall: async (inputs, log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityGetManyInputs.apicall',
+      inputs: inputs,
+      tags: ['function'],
+    })
+    try {
+      return await apiActivityGetMany(inputs, appStore.getState().authSlice.token)
+    } catch (err) {
+      return err
+    }
+  },
+  getmanageresponsefunction: (response, log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityGetManyInputs.getmanageresponsefunction',
+      response: response,
+      tags: ['function'],
+    })
+    let responses = {
+      'activities.getmany.success': () => {
+        appStore.dispatch({
+          type: 'activitySlice/change',
+          payload: {
+            activities: response.data.activities,
+            state: {
+              getmany: 'available'
+            }
+          }
+        })
+      },
+      'activities.getmany.error.undefined': () => {
+        console.warn("getmanageresponsefunction activity.getone.error.undefined")
+        appStore.dispatch({
+          type: 'activitySlice/change',
+          payload: {
+            state: {
+              getmany: 'available'
+            }
+          },
+        })
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+      'activity.getone.error.onfind': () => {
+        console.warn("getmanageresponsefunction activity.getone.error.onfind")
+        appStore.dispatch({
+          type: 'activitySlice/change',
+          payload: {
+            state: {
+              getmany: 'available'
+            }
           },
         })
         appStore.dispatch({
@@ -347,8 +517,5 @@ export const activityGetOneInputs = {
     console.log("WHAT IS THE response.type : " + response.type)
     return responses[response.type]()
   },
-}
-
-export const activityGetManyInputs = {
 }
 

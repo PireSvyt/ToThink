@@ -16,7 +16,7 @@ export default function LanguageSwitcher() {
   const { t } = useTranslation()
 
   // Constants
-  const languages = ['frFR', 'enGB']
+  const languages = ['enGB', 'frFR']
   let c = -1
 
   // States
