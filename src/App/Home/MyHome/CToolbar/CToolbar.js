@@ -11,6 +11,7 @@ import ViewStreamIcon from '@mui/icons-material/ViewStream';
 import ArticleIcon from '@mui/icons-material/Article';
 
 import appStore from '../../../store.js'
+import { serviceActivityGetMany } from '../../../_services/activity/activity.services.js';
 
 export default function CToolbar(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
@@ -43,9 +44,15 @@ export default function CToolbar(props) {
   // Changes
   let changes = {
     set: (e, val) => {
-      //console.log("CToolbar.changes.set", e, val)
       if (val !== null) {
-        //let newZoomLevel = zoomLevels.filter(zl => zl.zoomLevel === val)[0].zoomLevel
+        if (val !== "0") {
+          console.log("CToolbar.set", val)
+          serviceActivityGetMany({
+            requirements: [
+              "name", "description", "tasks", "order"
+            ]
+          })
+        }
         props.set(val)
       }
     },
@@ -107,7 +114,6 @@ export default function CToolbar(props) {
         }}
       >
         {zoomLevels.map(zl => {
-          console.log("zoomLevels", zl)
           return (            
             <ToggleButton 
               value={zl.zoomLevel} 

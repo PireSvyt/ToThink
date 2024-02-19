@@ -6,7 +6,10 @@
       "help": "Help",
       "activity": "activity",
       "task": "tothink",
-      "todo": "todo"
+      "tothink": "tothink",
+      "todo": "todo",
+      "wip": "wip",
+      "done": "done"
     },
     "menu": {
       "home": "Home",

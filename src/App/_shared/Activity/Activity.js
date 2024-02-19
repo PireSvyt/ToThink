@@ -7,7 +7,8 @@ import {
   IconButton,
   List,
   Collapse,
-  Divider
+  Divider,
+  Skeleton
 } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TransitionGroup } from 'react-transition-group';
@@ -16,7 +17,7 @@ import Task from '../Task/Task.js'
 import Editable from '../Editable/Editable.js'
 import ItemMenu from '../ItemMenu/ItemMenu.js'
 import appStore from '../../store.js'
-import { serviceActivityUpdate, serviceActivityDelete, serviceActivityOrder } from '../../_services/activity/activity.services'
+import { serviceActivityUpdate, serviceActivityDelete, serviceActivityOrder, serviceActivityGetOne } from '../../_services/activity/activity.services'
 import { serviceTaskGetMany } from '../../_services/task/task.services'
 import activitySettings from './activity.settings.json'
 import ConfirmModal from '../ConfirmModal/ConfirmModal.js'
@@ -75,11 +76,13 @@ export default function Activity(props) {
     },
     save: async (fieldValue) => {
       //console.log("Activity.save ", fieldValue)
-      let directInputs = {
-        activityid: props.activityid
+      if (select.activity[fieldValue.field] !== fieldValue.value) {
+        let directInputs = {
+          activityid: props.activityid
+        }
+        directInputs[fieldValue.field] = fieldValue.value
+        serviceActivityUpdate(directInputs)
       }
-      directInputs[fieldValue.field] = fieldValue.value
-      serviceActivityUpdate(directInputs)
     },
     drag: (e) => {
       console.log("DRAG "+e.target.key)
@@ -145,6 +148,25 @@ export default function Activity(props) {
     }
   }
 
+  // Check availabilties, otherwise fetch
+  function availabilitiesMeetZoomRequirement() {
+    if (select.activity !== undefined) {
+      if (select.activity.availabilities !== undefined) {
+        //console.log("select.activity.availabilities", select.activity.availabilities)
+        Object.keys(activitySettings.requirements[props.zoomLevel]).forEach(k => {
+          if (select.activity.availabilities[k] === undefined) {
+            console.log("GETTING ACTIVIY", props.activityid)
+            /*serviceActivityGetOne({
+              activityid: props.activityid
+            })*/
+            return
+          }
+        })
+      }
+    }
+  }
+  availabilitiesMeetZoomRequirement()
+
   let c = -1
   let d = -1
 
@@ -180,15 +202,16 @@ export default function Activity(props) {
             alignItems: 'center'
           }}
         >
-          <Editable 
-            value={select.activity.name} 
-            type={'TextField'} 
-            field={'name'} 
-            save={changes.save} 
-            edit={changes.edit}
-            zoomConstrains={activitySettings.name[props.zoomLevel]}
-            disabled={disabled || props.dragging}
-          />
+          {activitySettings.requirements[props.zoomLevel].name === undefined ? (null) : (
+            <Editable 
+              value={select.activity} 
+              type={'TextField'} 
+              field={'name'}
+              changes={changes}
+              settings={activitySettings.requirements[props.zoomLevel].name}
+              disabled={disabled || props.dragging}
+            />
+          )}
           <ItemMenu 
             prefix={"list-activities#listitem-"+props.index}
             menuItems={menuItems}
@@ -197,17 +220,18 @@ export default function Activity(props) {
           />
         </Box>
 
-        <Editable 
-          value={select.activity.description} 
-          type={'TextField'} 
-          field={'description'} 
-          save={changes.save} 
-          edit={changes.edit}
-          zoomConstrains={activitySettings.description[props.zoomLevel]}
-          disabled={disabled || props.dragging}
-        />
+        {activitySettings.requirements[props.zoomLevel].description === undefined ? (null) : (
+          <Editable 
+            value={select.activity} 
+            type={'TextField'} 
+            field={'description'}
+            changes={changes}
+            settings={activitySettings.requirements[props.zoomLevel].description}
+            disabled={disabled || props.dragging}
+          />
+        )}
 
-        {activitySettings.tasks[props.zoomLevel].hidden === false ? (
+        {activitySettings.requirements[props.zoomLevel].tasks === undefined ? (null) : (
           <Box          
           // TASKS --------------------------------------------------------------
           sx={{
@@ -223,7 +247,7 @@ export default function Activity(props) {
             }}
             >
               <Typography 
-                variant={activitySettings.tasks[props.zoomLevel].variant}
+                variant={activitySettings.requirements[props.zoomLevel].tasks.variant}
                 component="span"
               >
                 {t('activity.label.tasks')}
@@ -239,50 +263,71 @@ export default function Activity(props) {
               </IconButton>
             </Box>
           
-            <List 
-              dense={false}
-              data-testid={"list-activities#listitem-"+props.index+"#list-tasks"}
-              sx={{ 
-                width: '95%',
-                p: 0
-              }}
-            >
-              <TransitionGroup>
-                { select.activity.tasks !== undefined ? (
-                  select.activity.tasks.map((activityTask) => {
-                    d += 1
-                    return (
-                      <Collapse 
-                        key={'task-' + activityTask.taskid}
-                        sx={{ 
-                          width: '100%',
-                          p: 0
-                        }}
-                      >
-                        <Task 
-                          taskid={activityTask.taskid}
-                          index={d} 
-                          prefix={"list-activities#listitem-"+props.index+"#"}
-                          disabled={disabled || props.dragging}
-                          zoomLevel={props.zoomLevel}
-                        />
-                        { ["0", "1"].includes(props.zoomLevel) ? (null) : (                              
-                          <Divider 
-                            variant="middle" 
-                            component="li" 
-                            sx={{ mt:1, mb:1}} 
+            {select.activity.availabilities.tasks !== 'available' ? (
+              <Box 
+                sx={{ 
+                  width: '95%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }} 
+              >
+                <Skeleton 
+                  variant="text" 
+                  width={(Math.random()*60)+'%'}
+                />
+                <Skeleton 
+                  variant="text" 
+                  width={(10+Math.random()*20)+'%'}
+                />
+              </Box>
+            ) : (
+              <List 
+                dense={false}
+                data-testid={"list-activities#listitem-"+props.index+"#list-tasks"}
+                sx={{ 
+                  width: '95%',
+                  p: 0
+                }}
+              >
+                <TransitionGroup>
+                  { select.activity.tasks !== undefined ? (
+                    select.activity.tasks.map((activityTask) => {
+                      d += 1
+                      return (
+                        <Collapse 
+                          key={'task-' + activityTask.taskid}
+                          sx={{ 
+                            width: '100%',
+                            p: 0
+                          }}
+                        >
+                          <Task 
+                            taskid={activityTask.taskid}
+                            index={d} 
+                            prefix={"list-activities#listitem-"+props.index+"#"}
+                            disabled={disabled || props.dragging}
+                            zoomLevel={props.zoomLevel}
                           />
-                        )}
-                      </Collapse>
-                    )
-                  })
-                ) : ( null)
-                }
-              </TransitionGroup>
-            </List> 
+                          { ["0", "1"].includes(props.zoomLevel) ? (null) : (                              
+                            <Divider 
+                              variant="middle" 
+                              component="li" 
+                              sx={{ mt:1, mb:1}} 
+                            />
+                          )}
+                        </Collapse>
+                      )
+                    })
+                  ) : ( null)
+                  }
+                </TransitionGroup>
+              </List> 
+            )}
 
           </Box>
-        ) : (null)}
+        )}
 
         <Box 
           data-testid={"list-activities#listitem-"+props.index+"#box-bottom dropping area"}

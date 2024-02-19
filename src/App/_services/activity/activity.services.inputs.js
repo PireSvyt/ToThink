@@ -419,7 +419,7 @@ export const activityGetOneInputs = {
         })
       },
     }
-    //console.log("WHAT IS THE response.type : " + response.type)
+    console.log("WHAT IS THE response.type : " + response.type)
     return responses[response.type]()
   },
 }
@@ -432,11 +432,12 @@ export const activityGetManyInputs = {
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'activitySlice/change',
+      type: 'activitySlice/getmany',
       payload: {
-        state: {
-          getmany: 'wip'
-        }
+        state: 'wip',
+        requirements: [
+          "name", "description", "tasks", "order"
+        ]
       }
     })
   },
@@ -446,19 +447,23 @@ export const activityGetManyInputs = {
       message: 'activityGetManyInputs.getinputsfunction',
       tags: ['function'],
     })
+    let inputs = {}
+    if (directInputs.activityids !== undefined) {
+      inputs.activityids = directInputs.activityids
+    }
+    if (directInputs.requirements !== undefined) {
+      inputs.requirements = directInputs.requirements
+    }
     return {
-      inputs: {...directInputs},
+      inputs: inputs,
     }
   },
   sercivechecks: [
-    /*{
+    {
       // Check inputs root is available
       field: 'inputs',
       error: 'activity.error.missinginputs',
-      subchecks: [
-        
-      ],
-    },*/
+    },
   ],
   apicall: async (inputs, log) => {
     log.push({
@@ -483,7 +488,7 @@ export const activityGetManyInputs = {
     let responses = {
       'activities.getmany.success': () => {
         appStore.dispatch({
-          type: 'activitySlice/update',
+          type: 'activitySlice/getmany',
           payload: {
             activities: response.data.activities,
           }
