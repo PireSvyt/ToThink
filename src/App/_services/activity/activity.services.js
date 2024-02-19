@@ -5,6 +5,8 @@ import {
   activityDeleteInputs,
   activityGetOneInputs,
   activityGetManyInputs,
+  activityGetMineInputs,
+  activityOrderInputs
 } from './activity.services.inputs.js'
 // Services
 import serviceProceed from '../_services/serviceProceed.js'
@@ -27,10 +29,6 @@ export async function serviceActivityDelete(directInputs) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
     console.log('serviceActivityDelete')
   }
-  /*let inputs = {
-    activityid: directInputs.activityid,
-    patientid: directInputs.patientid,
-  }*/
   await serviceProceed(activityDeleteInputs, directInputs)
 }
 
@@ -47,3 +45,18 @@ export async function serviceActivityGetMany(directInputs) {
   }
   await serviceProceed(activityGetManyInputs, directInputs)
 }
+
+export async function serviceActivityGetMine(directInputs) {
+  if (process.env.REACT_APP_DEBUG === 'TRUE') {
+    console.log('serviceActivityGetMine')
+  }
+  await serviceProceed(activityGetMineInputs, directInputs)
+}
+
+export async function serviceActivityOrder(directInputs) {
+  if (process.env.REACT_APP_DEBUG === 'TRUE') {
+    console.log('serviceActivityOrder')
+  }
+  await serviceProceed(activityOrderInputs, directInputs)
+}
+

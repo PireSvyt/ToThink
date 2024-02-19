@@ -4,11 +4,9 @@ import {
   Box,
   IconButton,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@mui/material'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
-import { random_id } from '../../_services/toolkit'
 
 export default function ItemMenu(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
@@ -30,6 +28,11 @@ export default function ItemMenu(props) {
     closeMenu: () => {
         setMenuOpen(false)
     },
+    onclick: (e) => {
+        console.log("ItemMenu.onclick", e.target.getAttribute('name'))
+        setMenuOpen(false)
+        props.onclick(e.target.getAttribute('name'))
+    }
   }
 
   let c = -1
@@ -60,8 +63,9 @@ export default function ItemMenu(props) {
                 return (
                     <MenuItem
                         data-testid={props.prefix+"#list-item menu#listitem-"+c}
-                        key={random_id()}
-                        onClick={item.onclick}
+                        key={item.name}
+                        name={item.name}
+                        onClick={changes.onclick}
                         hidden={item.hidden === true}
                         disabled={item.disabled === true}
                         dense

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box } from '@mui/material'
@@ -42,7 +42,6 @@ export default function Home() {
       ) : select.userState.details === 'available' ? (
         <Box
           sx={{ width: '100%' }}
-          bgcolor={'lightblue'}
         >
           {select.usertype === 'user' || select.usertype === 'admin' ? (
             <MyHome />
@@ -50,7 +49,7 @@ export default function Home() {
           null}
         </Box>
       ) : (
-        <Box sx={{ left: '10%', right: '10%' }}>
+        <Box sx={{ width: '1' }}>
           <LinearProgress />
         </Box>
       )}

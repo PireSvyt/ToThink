@@ -10,6 +10,7 @@ import {
 // Services
 import { random_id, random_string } from '../toolkit.js'
 import appStore from '../../store.js'
+import { serviceActivityGetMany } from '../activity/activity.services.js'
 
 export const taskCreateInputs = {
   lockuifunction: (log) => {
@@ -102,6 +103,13 @@ export const taskCreateInputs = {
         appStore.dispatch({
           type: 'taskModalSlice/close',
         })
+        if (response.data.dependencies !== undefined) {
+          if (response.data.dependencies.activityids !== undefined) {
+            serviceActivityGetMany({
+              activityids: response.data.dependencies.activityids
+            })
+          }
+        }
       },
       'task.create.error.oncreate': () => {
         appStore.dispatch({
@@ -206,6 +214,13 @@ export const taskUpdateInputs = {
             task: response.data.task
           }
         })
+        if (response.data.dependencies !== undefined) {
+          if (response.data.dependencies.activityids !== undefined) {
+            serviceActivityGetMany({
+              activityids: response.data.dependencies.activityids
+            })
+          }
+        }
       },
       'task.update.error.onmodify': () => {
         appStore.dispatch({
@@ -230,27 +245,19 @@ export const taskDeleteInputs = {
       tags: ['function'],
     })
     return {
-      inputs: {
-        taskid: directInputs.taskid,
-        patientid: appStore.getState().patientSlice.patientid,
-      },
+      inputs: directInputs,
     }
   },
   sercivechecks: [
     {
       // Check inputs root is available
       field: 'inputs',
-      error: 'game.error.missinginputs',
+      error: 'generic.error.missinginputs',
       subchecks: [
         {
           // Check taskid is available
           field: 'taskid',
           error: 'task.error.missingtaskid',
-        },
-        {
-          // Check patientid is available
-          field: 'patientid',
-          error: 'task.error.missingpatientid',
         },
       ],
     },
@@ -276,16 +283,23 @@ export const taskDeleteInputs = {
       tags: ['function'],
     })
     let responses = {
-      'task.deletemine.success': () => {
+      'task.deleteone.success': () => {
+        console.log("DELETEONE SUCCESS", response.data)
         appStore.dispatch({
-          type: 'sliceSnack/change',
+          type: 'taskSlice/delete',
           payload: {
-            uid: random_id(),
-            id: 'task.snack.deleted',
+            taskid: response.data.taskid
           },
         })
+        if (response.data.dependencies !== undefined) {
+          if (response.data.dependencies.activityids !== undefined) {
+            serviceActivityGetMany({
+              activityids: response.data.dependencies.activityids
+            })
+          }
+        }
       },
-      'task.deletemine.errorondelete': () => {
+      'task.deleteone.errorondelete': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -295,6 +309,7 @@ export const taskDeleteInputs = {
         })
       },
     }
+    console.log("WHAT IS THE response.type : " + response.type)
     return responses[response.type]()
   },
 }

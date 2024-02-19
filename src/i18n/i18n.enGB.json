@@ -3,7 +3,10 @@
     "label": {
       "product": "ToThink©",
       "account": "Account",
-      "help": "Help"
+      "help": "Help",
+      "activity": "activity",
+      "task": "tothink",
+      "todo": "todo"
     },
     "menu": {
       "home": "Home",

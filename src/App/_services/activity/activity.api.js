@@ -82,3 +82,19 @@ export async function apiActivityGetMany(getManyInputs, token) {
     return err.response.data
   }
 }
+
+export async function apiActivityGetMine(getMineInputs, token) {
+  try {
+    const res = await axios({
+      method: 'post',
+      url: apiURL + 'activity/v1/getmine',
+      data: getMineInputs,
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    return res.data
+  } catch (err) {
+    return err.response.data
+  }
+}

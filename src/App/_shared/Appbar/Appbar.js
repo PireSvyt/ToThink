@@ -172,6 +172,7 @@ export default function Appbar(props) {
         sx={{
           top: 0,
           bottom: 'auto',
+          width: '100%'
         }}
         color={props.route === 'admin' ? 'error' : 'primary'}
         data-testid="component-app bar"

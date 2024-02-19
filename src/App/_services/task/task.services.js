@@ -27,10 +27,6 @@ export async function serviceTaskDelete(directInputs) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
     console.log('serviceTaskDelete')
   }
-  /*let inputs = {
-    taskid: directInputs.taskid,
-    patientid: directInputs.patientid,
-  }*/
   await serviceProceed(taskDeleteInputs, directInputs)
 }
 

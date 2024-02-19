@@ -5,13 +5,10 @@ import {
   Box,
   Typography,
   IconButton,
-  Menu,
-  MenuItem,
   List,
-  ListItem,
+  Collapse,
+  Divider
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu.js'
-import SmsFailedIcon from '@mui/icons-material/SmsFailed'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TransitionGroup } from 'react-transition-group';
 
@@ -19,32 +16,21 @@ import Task from '../Task/Task.js'
 import Editable from '../Editable/Editable.js'
 import ItemMenu from '../ItemMenu/ItemMenu.js'
 import appStore from '../../store.js'
-import { serviceActivityUpdate } from '../../_services/activity/activity.services'
+import { serviceActivityUpdate, serviceActivityDelete, serviceActivityOrder } from '../../_services/activity/activity.services'
 import { serviceTaskGetMany } from '../../_services/task/task.services'
-import { random_id } from '../../_services/toolkit.js'
-import activityBreakpoints from './activity.breakpoints.json'
+import activitySettings from './activity.settings.json'
+import ConfirmModal from '../ConfirmModal/ConfirmModal.js'
 
 export default function Activity(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
-    //console.log('Activity ' + props.activity.activityid)
+    //console.log('Activity', props.activity)
   }
   // i18n
   const { t } = useTranslation()
 
   // Selects
   const select = {
-    myActivityTasks: useSelector((state) => { 
-      if (props.activity.tasks === undefined) {
-        return []
-      } else {
-        Object.entries(state.taskSlice.tasks)
-        .filter( task => { 
-          return props.activity.tasks
-            .map(activityTask => { return activityTask.taskid })
-            .includes(task.taskid)
-        })
-      }      
-    })
+    activity: useSelector((state) => state.activitySlice.activities[props.activityid]),
   }
 
   // Changes
@@ -53,6 +39,10 @@ export default function Activity(props) {
       setAnchorEl(event.currentTarget)
       setMenuOpen(true)
     },
+    onMenuItemClick: (value) => {
+      let clickedItem = menuItems.filter(menuItem => menuItem.name === value)[0]
+      clickedItem.onclick()
+    },
     closeMenu: () => {
       setMenuOpen(false)
     },
@@ -60,21 +50,11 @@ export default function Activity(props) {
       setConfirmOpen(true)
     },
     getTasks: () => {
-      serviceTaskGetMany( props.activity.tasks )
-    },
-    new: () => {
-      appStore.dispatch({
-        type: 'taskModalSlice/new',
-        payload: {
-          activity: {
-            activityid: props.activity.activityid
-          }
-        }
-      })
+      serviceTaskGetMany( select.activity.tasks )
     },
     edit: (fieldValue) => {
       console.log("Activity.edit", fieldValue)
-      let activityChange = {...props.activity}
+      let activityChange = {...select.activity}
       activityChange[fieldValue.field] = fieldValue.value
       appStore.dispatch({
         type: 'activitySlice/change',
@@ -83,53 +63,81 @@ export default function Activity(props) {
         }
       })
     },
+    new: () => {
+      appStore.dispatch({
+        type: 'taskModalSlice/new',
+        payload: {
+          inputs: {
+            activityid: props.activityid
+          }
+        }
+      })
+    },
     save: async (fieldValue) => {
       //console.log("Activity.save ", fieldValue)
       let directInputs = {
-        activityid: props.activity.activityid
+        activityid: props.activityid
       }
       directInputs[fieldValue.field] = fieldValue.value
       serviceActivityUpdate(directInputs)
     },
     drag: (e) => {
+      console.log("DRAG "+e.target.key)
+      // https://www.w3schools.com/html/html5_draganddrop.asp
+      e.dataTransfer.setData("text", props.activityid)
+      props.drag(true)
       setDragged(true)
-      e.dataTransfer.setData("text", e.target.data-testid);
+    },
+    allowDrop: (e) => {
+      //console.log("ALLOW "+e.target.key)
+      // https://www.w3schools.com/html/html5_draganddrop.asp
+      e.preventDefault()
+    },
+    drop: (e) => {
+      // https://www.w3schools.com/html/html5_draganddrop.asp
+      //e.preventDefault();
+      setDragged(false)
+      props.drag(false)
+      serviceActivityOrder({
+        activityid: e.dataTransfer.getData('text'),
+        where: e.target.getAttribute('name'),
+        wrt: props.activityid,
+      })    
     }
   }
 
   let menuItems = [
     {
-      item: 'duplicate',
+      name: 'duplicate',
       label: 'generic.button.duplicate',
       onclick: () => {console.log("TODO duplicate")},
       disabled: true
     },
     {
-      item: 'delete',
+      name: 'delete',
       label: 'generic.button.delete',
       onclick: changes.attemptDelete
     }
   ]
 
-  // Confirm modal
-  const [zoomLevel, setZoomLevel] = useState(0)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
+  // States
   const [dragged, setDragged] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [deleting, setDeleting] = useState(false)
+  const [disabled, setDisabled] = useState(false)
+  const [collapsing, setCollasping] = useState(false)
+  const [expanding, setExpanding] = useState(false)
   function confirmCallback(choice) {
     switch (choice) {
       case 'close':
         setConfirmOpen(false)
         break
       case 'delete':
-        setMenuOpen(false)
         setConfirmOpen(false)
-        setDeleting(true)
-        servicePatientDelete(props.patient.patientid).then(() => {
-          setDeleting(false)
-          serviceUserGetDetails()
+        setDisabled(true)
+        serviceActivityDelete({
+          activityid: props.activityid
+        }).then(() => {
+          setDisabled(false)
         })
         break
       default:
@@ -142,115 +150,177 @@ export default function Activity(props) {
 
   return (
     <Box
-      sx={{ width: '100%' }}
+      sx={{ width: '100%', m:0, p: 0 }}
     >
-      {dragged === true ? (
+      <Box
+        data-testid={"list-activities#listitem-"+props.index}
+        activityid={props.activityid}
+        sx={{ width: '100%', m:0, p: 0 }}
+        // https://www.w3schools.com/html/html5_draganddrop.asp
+        draggable={true}
+        onDragStart={changes.drag} 
+      >
+        <Box 
+          data-testid={"list-activities#listitem-"+props.index+"#box-top dropping area"}
+          sx={{
+            width: '100%',
+            p: activitySettings.dragAndDrop[props.zoomLevel].toparea
+          }}
+          // https://www.w3schools.com/html/html5_draganddrop.asp
+          onDrop={changes.drop} 
+          onDragOver={changes.allowDrop}
+          name='toparea'
+          activityid={props.activityid}
+        />
         <Box
-          data-testid={"list-activities#listitem-"+props.index}
-          activityid={props.activity.activityid}
-          sx={{ width: '100%' }}
-          bgcolor={'lightgrey'}
-          draggable="true"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center'
+          }}
         >
           <Editable 
-            value={props.activity.name} 
+            value={select.activity.name} 
             type={'TextField'} 
             field={'name'} 
             save={changes.save} 
             edit={changes.edit}
-            variant={activityBreakpoints.name.variant[zoomLevel]}
+            zoomConstrains={activitySettings.name[props.zoomLevel]}
+            disabled={disabled || props.dragging}
           />
-        </Box>  
-      ) : (
-        <Box
-          data-testid={"list-activities#listitem-"+props.index}
-          activityid={props.activity.activityid}
-          sx={{ width: '100%' }}
-          bgcolor={'lightgrey'}
-          draggable="true" 
-          ondragstart={changes.drag}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              width: '100%',
-              alignItems: 'center'
-            }}
-          >
-            <Editable 
-              value={props.activity.name} 
-              type={'TextField'} 
-              field={'name'} 
-              save={changes.save} 
-              edit={changes.edit}
-              variant={activityBreakpoints.name.variant[zoomLevel]}
-            />
-            <ItemMenu 
-              prefix={"list-activities#listitem-"+props.index}
-              menuItems={menuItems}
-            />
-          </Box>
-
-          <Editable 
-            value={props.activity.description} 
-            type={'TextField'} 
-            field={'description'} 
-            save={changes.save} 
-            edit={changes.edit} 
+          <ItemMenu 
+            prefix={"list-activities#listitem-"+props.index}
+            menuItems={menuItems}
+            onclick={changes.onMenuItemClick}
+            disabled={disabled || props.dragging}
           />
+        </Box>
 
-          <Box
-            // TASKS --------------------------------------------------------------
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              width: '100%',
-              alignItems: 'center'
-            }}
+        <Editable 
+          value={select.activity.description} 
+          type={'TextField'} 
+          field={'description'} 
+          save={changes.save} 
+          edit={changes.edit}
+          zoomConstrains={activitySettings.description[props.zoomLevel]}
+          disabled={disabled || props.dragging}
+        />
+
+        {activitySettings.tasks[props.zoomLevel].hidden === false ? (
+          <Box          
+          // TASKS --------------------------------------------------------------
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
           >
-            <Typography 
-              variant={activityBreakpoints.tasks.variant[zoomLevel]}
-              component="span">
-              {t('activity.label.tasks')}
-            </Typography>
-            <IconButton
-              data-testid={"list-activities#listitem-"+props.index+"#button-add task"}
-              onClick={changes.new}
-              color='primary'
-              size='small'
+            <Box
+            sx={{
+              width: '100%',
+            }}
             >
-              <AddCircleIcon />
-            </IconButton>
+              <Typography 
+                variant={activitySettings.tasks[props.zoomLevel].variant}
+                component="span"
+              >
+                {t('activity.label.tasks')}
+              </Typography>
+              <IconButton
+                data-testid={"list-activities#listitem-"+props.index+"#button-add task"}
+                onClick={changes.new}
+                color='primary'
+                size='small'
+                disabled={disabled || props.dragging}
+              >
+                <AddCircleIcon />
+              </IconButton>
+            </Box>
+          
+            <List 
+              dense={false}
+              data-testid={"list-activities#listitem-"+props.index+"#list-tasks"}
+              sx={{ 
+                width: '95%',
+                p: 0
+              }}
+            >
+              <TransitionGroup>
+                { select.activity.tasks !== undefined ? (
+                  select.activity.tasks.map((activityTask) => {
+                    d += 1
+                    return (
+                      <Collapse 
+                        key={'task-' + activityTask.taskid}
+                        sx={{ 
+                          width: '100%',
+                          p: 0
+                        }}
+                      >
+                        <Task 
+                          taskid={activityTask.taskid}
+                          index={d} 
+                          prefix={"list-activities#listitem-"+props.index+"#"}
+                          disabled={disabled || props.dragging}
+                          zoomLevel={props.zoomLevel}
+                        />
+                        { ["0", "1"].includes(props.zoomLevel) ? (null) : (                              
+                          <Divider 
+                            variant="middle" 
+                            component="li" 
+                            sx={{ mt:1, mb:1}} 
+                          />
+                        )}
+                      </Collapse>
+                    )
+                  })
+                ) : ( null)
+                }
+              </TransitionGroup>
+            </List> 
+
           </Box>
-        
-          <List 
-            dense={false}
-            data-testid={"list-activities#listitem-"+props.index+"#list-tasks"}
-            sx={{ 
-              width: '100%',
-              p: 0
-            }}
-          >
-            <TransitionGroup>
-              {props.activity.tasks.map((activityTask) => {
-                d += 1
-                return (
-                  <ListItem 
-                    key={'task-' + activityTask.taskid}
-                    sx={{ 
-                      width: '100%',
-                      p: 0
-                    }}
-                  >
-                    <Task task={activityTask} index={d} prefix={"list-activities#listitem-"+props.index+"#"} />
-                  </ListItem>
-                )
-              })}
-            </TransitionGroup>
-          </List>    
-        </Box>  
-      )}   
+        ) : (null)}
+
+        <Box 
+          data-testid={"list-activities#listitem-"+props.index+"#box-bottom dropping area"}
+          sx={{
+            width: '100%',
+            p: activitySettings.dragAndDrop[props.zoomLevel].bottomarea
+          }}
+          // https://www.w3schools.com/html/html5_draganddrop.asp
+          onDrop={changes.drop} 
+          onDragOver={changes.allowDrop}
+          name='bottomarea'
+          activityid={props.activityid}
+        />
+
+      </Box>
+
+      {confirmOpen === false ? null : (
+        <ConfirmModal
+          open={confirmOpen}
+          data={{
+            title: 'activity.confirm.delete.title',
+            content: 'activity.confirm.delete.content',
+            callToActions: [
+              {
+                label: 'generic.button.cancel',
+                choice: 'close',
+              },
+              {
+                label: 'generic.button.proceed',
+                choice: 'delete',
+                variant: 'contained',
+                color: 'error',
+              },
+            ],
+          }}
+          callback={confirmCallback}
+        />
+      )}
     </Box>
   )
 }

@@ -1,0 +1,62 @@
+{
+    "name": {
+        "0": {
+            "variant": "body1",
+            "hidden": true
+        },
+        "1": {
+            "variant": "body1",
+            "hidden": false
+        },
+        "2": {
+            "variant": "h6",
+            "hidden": false
+        }
+    },
+    "state": {
+        "0": {
+            "variant": "body1",
+            "hidden": true
+        },
+        "1": {
+            "variant": "body1",
+            "hidden": false
+        },
+        "2": {
+            "variant": "body2",
+            "hidden": false
+        },
+        "values": [
+            {
+                "label": "generic.label.tothink",
+                "value": "tothink"
+            },
+            {
+                "label": "generic.label.todo",
+                "value": "todo"
+            },
+            {
+                "label": "generic.label.wip",
+                "value": "wip"
+            },
+            {
+                "label": "generic.label.done",
+                "value": "done"
+            }
+        ]
+    },
+    "description": {
+        "0": {
+            "variant": "body2",
+            "hidden": true
+        },
+        "1": {
+            "variant": "body2",
+            "hidden": true
+        },
+        "2": {
+            "variant": "body2",
+            "hidden": false
+        }
+    }
+}
