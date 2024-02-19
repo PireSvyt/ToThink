@@ -1,10 +1,10 @@
 // APIs
-import { 
-  apiTaskCreate, 
-  apiTaskUpdate, 
-  apiTaskDelete, 
-  apiTaskGetOne, 
-  apiTaskGetMany 
+import {
+  apiTaskCreate,
+  apiTaskUpdate,
+  apiTaskDelete,
+  apiTaskGetOne,
+  apiTaskGetMany,
 } from './task.api.js'
 
 // Services
@@ -97,8 +97,8 @@ export const taskCreateInputs = {
         appStore.dispatch({
           type: 'taskSlice/change',
           payload: {
-            task: response.data.task
-          }
+            task: response.data.task,
+          },
         })
         appStore.dispatch({
           type: 'taskModalSlice/close',
@@ -106,7 +106,7 @@ export const taskCreateInputs = {
         if (response.data.dependencies !== undefined) {
           if (response.data.dependencies.activityids !== undefined) {
             serviceActivityGetMany({
-              activityids: response.data.dependencies.activityids
+              activityids: response.data.dependencies.activityids,
             })
           }
         }
@@ -211,13 +211,13 @@ export const taskUpdateInputs = {
         appStore.dispatch({
           type: 'taskSlice/change',
           payload: {
-            task: response.data.task
-          }
+            task: response.data.task,
+          },
         })
         if (response.data.dependencies !== undefined) {
           if (response.data.dependencies.activityids !== undefined) {
             serviceActivityGetMany({
-              activityids: response.data.dependencies.activityids
+              activityids: response.data.dependencies.activityids,
             })
           }
         }
@@ -284,17 +284,17 @@ export const taskDeleteInputs = {
     })
     let responses = {
       'task.deleteone.success': () => {
-        console.log("DELETEONE SUCCESS", response.data)
+        console.log('DELETEONE SUCCESS', response.data)
         appStore.dispatch({
           type: 'taskSlice/delete',
           payload: {
-            taskid: response.data.taskid
+            taskid: response.data.taskid,
           },
         })
         if (response.data.dependencies !== undefined) {
           if (response.data.dependencies.activityids !== undefined) {
             serviceActivityGetMany({
-              activityids: response.data.dependencies.activityids
+              activityids: response.data.dependencies.activityids,
             })
           }
         }
@@ -309,7 +309,7 @@ export const taskDeleteInputs = {
         })
       },
     }
-    console.log("WHAT IS THE response.type : " + response.type)
+    console.log('WHAT IS THE response.type : ' + response.type)
     return responses[response.type]()
   },
 }
@@ -332,7 +332,7 @@ export const taskGetOneInputs = {
       tags: ['function'],
     })
     return {
-      inputs: {...directInputs},
+      inputs: { ...directInputs },
     }
   },
   sercivechecks: [
@@ -382,26 +382,28 @@ export const taskGetOneInputs = {
         })
       },
       'task.getanalysis.error.undefined': () => {
-        console.warn("getmanageresponsefunction task.getanalysis.error.undefined")
+        console.warn(
+          'getmanageresponsefunction task.getanalysis.error.undefined'
+        )
         appStore.dispatch({
           type: 'taskSlice/change',
           payload: {
             state: {
-              analysis: 'denied'
-            }
+              analysis: 'denied',
+            },
           },
         })
       },
       'task.getanalysis.error.onfind': () => {
-        console.warn("getmanageresponsefunction task.getanalysis.error.onfind")
+        console.warn('getmanageresponsefunction task.getanalysis.error.onfind')
         appStore.dispatch({
           type: 'taskSlice/setAnalysis',
           payload: {
             type: 'taskSlice/change',
             payload: {
               state: {
-                analysis: 'denied'
-              }
+                analysis: 'denied',
+              },
             },
           },
         })
@@ -414,11 +416,9 @@ export const taskGetOneInputs = {
         })
       },
     }
-    console.log("WHAT IS THE response.type : " + response.type)
+    console.log('WHAT IS THE response.type : ' + response.type)
     return responses[response.type]()
   },
 }
 
-export const taskGetManyInputs = {
-}
-
+export const taskGetManyInputs = {}

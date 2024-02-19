@@ -9,10 +9,10 @@ const activitySlice = createSlice({
       update: undefined,
       getmany: undefined,
       getone: undefined,
-      delete: undefined
+      delete: undefined,
     },
     activities: {},
-    sortedList: []
+    sortedList: [],
   },
   reducers: {
     mine: (state, action) => {
@@ -22,16 +22,16 @@ const activitySlice = createSlice({
       state.state.getmine = 'available'
     },
     getmany: (state, action) => {
-      console.log("activitySlice.getmany", action.payload)
+      console.log('activitySlice.getmany', action.payload)
       // request
       if (action.payload.state !== undefined) {
         state.state.getmany = action.payload.state
         if (action.payload.state === 'wip') {
-          let activities = {...state.activities}
-          Object.keys(activities).forEach(aid => {
-            let wipActivity = {...activities[aid]}
+          let activities = { ...state.activities }
+          Object.keys(activities).forEach((aid) => {
+            let wipActivity = { ...activities[aid] }
             let availabilities = wipActivity.availabilities
-            action.payload.requirements.forEach(req => {
+            action.payload.requirements.forEach((req) => {
               if (availabilities[req] !== 'available') {
                 availabilities[req] = 'wip'
               }
@@ -43,19 +43,22 @@ const activitySlice = createSlice({
       }
       // result
       if (action.payload.activities !== undefined) {
-        action.payload.activities.forEach(a => {
-          let activity = {...a}
+        action.payload.activities.forEach((a) => {
+          let activity = { ...a }
           let previousActivity = state.activities[activity.activityid]
-          activity.availabilities = getAvailabilities(activity, previousActivity.availabilities)
+          activity.availabilities = getAvailabilities(
+            activity,
+            previousActivity.availabilities
+          )
           state.activities[activity.activityid] = activity
-        });
+        })
         state.state.getmany = 'available'
       }
     },
     create: (state, action) => {
       // Creates a new activity
       //console.log("activitySlice.create", action.payload)
-      let activity = {...action.payload.activity}
+      let activity = { ...action.payload.activity }
       activity.availabilities = getAvailabilities(activity)
       state.activities[activity.activityid] = activity
       state.sortedList.unshift(action.payload.activity)
@@ -66,17 +69,17 @@ const activitySlice = createSlice({
       //console.log("activitySlice.store", action.payload)
       // get one
       if (action.payload.activity !== undefined) {
-        let activity = {...action.payload.activity}
+        let activity = { ...action.payload.activity }
         activity.availabilities = getAvailabilities(activity)
         state.activities[action.payload.activity.activityid] = activity
       }
       // get many
       if (action.payload.activities !== undefined) {
-        action.payload.activities.forEach(a => {
-          let activity = {...a}
+        action.payload.activities.forEach((a) => {
+          let activity = { ...a }
           activity.availabilities = getAvailabilities(activity)
           state.activities[activity.activityid] = activity
-        });
+        })
         state.state.getmany = 'available'
       }
     },
@@ -93,48 +96,48 @@ const activitySlice = createSlice({
       let sortedList = [...state.sortedList]
       // Activity
       if (action.payload.activity !== undefined) {
-        let activity = {...action.payload.activity}        
+        let activity = { ...action.payload.activity }
         activity.availabilities = getAvailabilities(activity)
         state.activities[action.payload.activity.activityid] = activity
         // SortedList
-        let activityids = sortedList.map(a => {
+        let activityids = sortedList.map((a) => {
           return a.activityid
         })
         let pos = activityids.indexOf(action.payload.activity.activityid)
         sortedList[pos] = action.payload.activity
         if (state.sortedList[pos].order !== sortedList[pos].order) {
-          console.log("SORT")
+          console.log('SORT')
           sortedList.sort((a, b) => {
-            let c = {...a}
-            let d = {...b}
+            let c = { ...a }
+            let d = { ...b }
             return d.order - c.order
           })
         }
       }
       // Activities
       if (action.payload.activities !== undefined) {
-        action.payload.activities.forEach(a => {
-          let activity = {...a}        
+        action.payload.activities.forEach((a) => {
+          let activity = { ...a }
           activity.availabilities = getAvailabilities(activity)
           state.activities[activity.activityid] = activity
           // SortedList
-          let activityids = sortedList.map(a => {
+          let activityids = sortedList.map((a) => {
             return a.activityid
           })
           let pos = activityids.indexOf(activity.activityid)
           sortedList[pos] = activity
         })
         sortedList.sort((a, b) => {
-          let c = {...a}
-          let d = {...b}
+          let c = { ...a }
+          let d = { ...b }
           return d.order - c.order
         })
       }
-      console.log("sortedList",sortedList)
+      console.log('sortedList', sortedList)
       state.sortedList = sortedList
     },
     change: (state, action) => {
-      console.log("activitySlice.change", action.payload)
+      console.log('activitySlice.change', action.payload)
       if (action.payload.state !== undefined) {
         if (action.payload.state.getmine !== undefined) {
           state.state.getmine = action.payload.state.getmine
@@ -157,8 +160,10 @@ const activitySlice = createSlice({
       }
       // get one
       if (action.payload.activity !== undefined) {
-        let currentActivity = {...state.activities[action.payload.activity.activityid]}
-        Object.keys(action.payload.activity).forEach(k => {
+        let currentActivity = {
+          ...state.activities[action.payload.activity.activityid],
+        }
+        Object.keys(action.payload.activity).forEach((k) => {
           currentActivity[k] = action.payload.activity[k]
         })
         state.activities[action.payload.activity.activityid] = currentActivity
@@ -194,10 +199,10 @@ const activitySlice = createSlice({
       // TODO : many tasks*/
     },
     delete: (state, action) => {
-      console.log("sliceActivity.delete",action.payload)
-      let activities = {...state.activities}
+      console.log('sliceActivity.delete', action.payload)
+      let activities = { ...state.activities }
       let sortedList = []
-      state.sortedList.forEach(sortedActivity => {
+      state.sortedList.forEach((sortedActivity) => {
         let toKeep = true
         if (action.payload.activityid !== undefined) {
           if (action.payload.activityid === sortedActivity.activityid) {
@@ -209,24 +214,23 @@ const activitySlice = createSlice({
           sortedList.push(sortedActivity)
         }
       })
-      console.log("sliceActivity.delete sortedList", sortedList)
+      console.log('sliceActivity.delete sortedList', sortedList)
       state.sortedList = sortedList
       state.activities = activities
-    }
+    },
   },
 })
 
 export default activitySlice.reducer
 
-
-function getAvailabilities (activity, previousAvailabilities = {}) {
+function getAvailabilities(activity, previousAvailabilities = {}) {
   let availabilities = {}
   // Activity
-  Object.keys(activity).forEach(k => {
+  Object.keys(activity).forEach((k) => {
     availabilities[k] = 'available'
   })
   // Previous activity
-  Object.keys(previousAvailabilities).forEach(k => {
+  Object.keys(previousAvailabilities).forEach((k) => {
     if (availabilities[k] === undefined) {
       availabilities[k] = 'available'
     }

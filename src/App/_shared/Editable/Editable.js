@@ -12,16 +12,16 @@ import {
   TextField,
   Input,
   Select,
-  Skeleton 
+  Skeleton,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu.js'
 import CircularProgress from '@mui/material/CircularProgress'
-import CloudQueueIcon from '@mui/icons-material/CloudQueue';
+import CloudQueueIcon from '@mui/icons-material/CloudQueue'
 
 import { random_id } from '../../_services/toolkit'
 
 export default function Editable(props) {
-/**
+  /**
  * PROPS
     value={select.activity} 
     type={'TextField'} 
@@ -47,14 +47,14 @@ export default function Editable(props) {
   let changes = {
     switchMode: () => {
       //setAnchorEl(event.currentTarget)
-      console.log("to edit "+ readOnly)
+      console.log('to edit ' + readOnly)
       setReadOnly(readOnly === false)
     },
     edit: async (e) => {
       if (props.value[props.field] !== e.target.value) {
         await props.changes.edit({
           field: props.field,
-          value: e.target.value
+          value: e.target.value,
         })
       }
     },
@@ -63,7 +63,7 @@ export default function Editable(props) {
         setSaving(true)
         await props.changes.save({
           field: props.field,
-          value: value
+          value: value,
         })
         setSaving(false)
       }
@@ -72,10 +72,10 @@ export default function Editable(props) {
       setSaving(true)
       await props.changes.save({
         field: props.field,
-        value: props.value[props.field]
+        value: props.value[props.field],
       })
       setSaving(false)
-    }
+    },
   }
 
   let c = -1
@@ -95,30 +95,30 @@ export default function Editable(props) {
   return (
     <Box
       sx={{
-        width: '100%'
+        width: '100%',
       }}
-      hidden={ getSetting("hidden", false) }
+      hidden={getSetting('hidden', false)}
     >
-      {props.type !== 'TextField' 
-      && props.value !== undefined 
-      && props.value[props.field] !== undefined ? ( null ) : (
-        <Box sx={{ width: '100%' }} >
-          {props.value.availabilities === undefined ? (null) : (
-            <Box sx={{ width: '100%' }} >
+      {props.type !== 'TextField' &&
+      props.value !== undefined &&
+      props.value[props.field] !== undefined ? null : (
+        <Box sx={{ width: '100%' }}>
+          {props.value.availabilities === undefined ? null : (
+            <Box sx={{ width: '100%' }}>
               {props.value.availabilities[props.field] !== 'available' ? (
-                <Box sx={{ width: '100%' }} >
-                  <Skeleton 
-                    variant="text" 
-                    sx={{typography: getSetting("variant", 'body1') }}
+                <Box sx={{ width: '100%' }}>
+                  <Skeleton
+                    variant="text"
+                    sx={{ typography: getSetting('variant', 'body1') }}
                   />
-                  <Skeleton 
-                    variant="text" 
-                    sx={{typography: getSetting("variant", 'body1') }}
-                    width={(Math.random()*100)+'%'}
+                  <Skeleton
+                    variant="text"
+                    sx={{ typography: getSetting('variant', 'body1') }}
+                    width={Math.random() * 100 + '%'}
                   />
-                </Box>  
+                </Box>
               ) : (
-                <Input  
+                <Input
                   multiline
                   fullWidth
                   size="small"
@@ -127,60 +127,60 @@ export default function Editable(props) {
                   variant="standard"
                   onChange={changes.edit}
                   onBlur={changes.save}
-                  sx={{typography: getSetting("variant", 'body1') }}
-                  disabled={ getSetting("disabled", false) }
+                  sx={{ typography: getSetting('variant', 'body1') }}
+                  disabled={getSetting('disabled', false)}
                 />
-              )}    
+              )}
             </Box>
-          )}  
-        </Box>  
+          )}
+        </Box>
       )}
 
-      {props.type !== 'Select'
-      && props.value !== undefined 
-      && props.value[props.field] !== undefined ? ( null ) : (
-        <Select 
-          data-testid={props.prefix+"#list-"+props.field}
+      {props.type !== 'Select' &&
+      props.value !== undefined &&
+      props.value[props.field] !== undefined ? null : (
+        <Select
+          data-testid={props.prefix + '#list-' + props.field}
           size="small"
           value={props.value[props.field]}
           label={t(props.field)}
           variant="standard"
-          disabled={ getSetting("disabled", false) }
+          disabled={getSetting('disabled', false)}
           onChange={changes.edit}
           onBlur={changes.save}
-          renderValue={ val => {
+          renderValue={(val) => {
             return (
-              <Typography 
-              variant={ getSetting("variant", "body1") }
-              >{t("generic.label."+val)}</Typography>
+              <Typography variant={getSetting('variant', 'body1')}>
+                {t('generic.label.' + val)}
+              </Typography>
             )
           }}
         >
-          {props.values === undefined ? (null) : (
+          {props.values === undefined ? null : (
             <Box>
-            {props.values.map((item) => {
-              c += 1
-              return (
+              {props.values.map((item) => {
+                c += 1
+                return (
                   <MenuItem
-                      data-testid={props.prefix+"#list-"+props.field+"#listitem-"+c}
-                      key={item.value}
-                      onClick={() => changes.onclick(item.value)}
-                      hidden={item.hidden === true}
-                      disabled={item.disabled === true}
-                      dense
+                    data-testid={
+                      props.prefix + '#list-' + props.field + '#listitem-' + c
+                    }
+                    key={item.value}
+                    onClick={() => changes.onclick(item.value)}
+                    hidden={item.hidden === true}
+                    disabled={item.disabled === true}
+                    dense
                   >
-                      <Typography 
-                        variant={ getSetting("variant", "body1") }
-                      >{t("generic.label."+item.value)}</Typography>
+                    <Typography variant={getSetting('variant', 'body1')}>
+                      {t('generic.label.' + item.value)}
+                    </Typography>
                   </MenuItem>
-              )
-            })}
+                )
+              })}
             </Box>
           )}
-
         </Select>
       )}
-      
     </Box>
   )
 }

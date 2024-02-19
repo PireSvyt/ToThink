@@ -11,7 +11,7 @@ import {
   FormControl,
   Typography,
   MenuItem,
-  Select
+  Select,
 } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useSelector } from 'react-redux'
@@ -80,7 +80,7 @@ export default function TaskModal() {
     },
   }
 
-let c = -1
+  let c = -1
 
   // Render
   return (
@@ -93,7 +93,7 @@ let c = -1
       >
         <DialogTitle>{t('task.label.new')}</DialogTitle>
         <DialogContent
-          /*sx={{
+        /*sx={{
             height: componentHeight,
           }}*/
         >
@@ -117,7 +117,7 @@ let c = -1
                 error={select.errors.name}
                 data-testid="modal-task#input-name"
               />
-              
+
               <Select
                 name="activityid"
                 required
@@ -128,18 +128,15 @@ let c = -1
                 error={select.errors.activityid}
                 data-testid="modal-task#input-activityid"
               >
-                <MenuItem 
-                  value=""
-                  key={"act-"+""}
-                >
+                <MenuItem value="" key={'act-' + ''}>
                   <em>{t('generic.label.none')}</em>
                 </MenuItem>
-                {Object.entries(select.activities).map(activity => {
+                {Object.entries(select.activities).map((activity) => {
                   c += 1
                   return (
-                    <MenuItem 
+                    <MenuItem
                       value={activity[1].activityid}
-                      key={"act-"+activity[1].activityid}
+                      key={'act-' + activity[1].activityid}
                     >
                       {activity[1].name}
                     </MenuItem>
@@ -151,10 +148,7 @@ let c = -1
         </DialogContent>
 
         <DialogActions>
-          <Button
-            data-testid="modal-task#button-close"
-            onClick={changes.close}
-          >
+          <Button data-testid="modal-task#button-close" onClick={changes.close}>
             {t('generic.button.cancel')}
           </Button>
           <LoadingButton

@@ -75,7 +75,7 @@ export default function ActivityModal() {
       >
         <DialogTitle>{t('activity.label.new')}</DialogTitle>
         <DialogContent
-          /*sx={{
+        /*sx={{
             height: componentHeight,
           }}*/
         >

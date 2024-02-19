@@ -1,11 +1,11 @@
 // APIs
-import { 
-  apiActivityCreate, 
-  apiActivityUpdate, 
-  apiActivityDelete, 
-  apiActivityGetOne, 
+import {
+  apiActivityCreate,
+  apiActivityUpdate,
+  apiActivityDelete,
+  apiActivityGetOne,
   apiActivityGetMany,
-  apiActivityGetMine
+  apiActivityGetMine,
 } from './activity.api.js'
 
 // Services
@@ -39,17 +39,20 @@ export const activityCreateInputs = {
       message: 'activityCreateInputs.getinputsfunction',
       tags: ['function'],
     })
-    let inputs = {...appStore.getState().activityModalSlice.inputs}
+    let inputs = { ...appStore.getState().activityModalSlice.inputs }
     let max = 0
     Object.entries(appStore.getState().activitySlice.activities).forEach(
-      activity => {
+      (activity) => {
         if (activity[1].order > max) {
           max = activity[1].order
         }
       }
     )
-    console.log("appStore.getState().activitySlice.activities", appStore.getState().activitySlice.activities)
-    inputs.order = 1 + max 
+    console.log(
+      'appStore.getState().activitySlice.activities',
+      appStore.getState().activitySlice.activities
+    )
+    inputs.order = 1 + max
     return { inputs: inputs }
   },
   sercivechecks: [
@@ -90,7 +93,10 @@ export const activityCreateInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityCreate(inputs, appStore.getState().authSlice.token)
+      return await apiActivityCreate(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -108,8 +114,8 @@ export const activityCreateInputs = {
         appStore.dispatch({
           type: 'activitySlice/create',
           payload: {
-            activity: response.data.activity
-          }
+            activity: response.data.activity,
+          },
         })
         appStore.dispatch({
           type: 'activityModalSlice/close',
@@ -197,7 +203,10 @@ export const activityUpdateInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityUpdate(inputs, appStore.getState().authSlice.token)
+      return await apiActivityUpdate(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -215,8 +224,8 @@ export const activityUpdateInputs = {
         appStore.dispatch({
           type: 'activitySlice/update',
           payload: {
-            activity: response.data.activity
-          }
+            activity: response.data.activity,
+          },
         })
       },
       'activity.update.error.onmodify': () => {
@@ -267,7 +276,10 @@ export const activityDeleteInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityDelete(inputs, appStore.getState().authSlice.token)
+      return await apiActivityDelete(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -284,14 +296,14 @@ export const activityDeleteInputs = {
         appStore.dispatch({
           type: 'activitySlice/delete',
           payload: {
-            activityid: response.data.activityid
+            activityid: response.data.activityid,
           },
         })
         if (response.data.taskids !== undefined) {
           appStore.dispatch({
             type: 'taskSlice/delete',
             payload: {
-              taskids: response.data.taskids
+              taskids: response.data.taskids,
             },
           })
         }
@@ -322,9 +334,9 @@ export const activityGetOneInputs = {
       type: 'activitySlice/change',
       payload: {
         state: {
-          getone: 'wip'
-        }
-      }
+          getone: 'wip',
+        },
+      },
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -334,7 +346,7 @@ export const activityGetOneInputs = {
       tags: ['function'],
     })
     return {
-      inputs: {...directInputs},
+      inputs: { ...directInputs },
     }
   },
   sercivechecks: [
@@ -342,9 +354,7 @@ export const activityGetOneInputs = {
       // Check inputs root is available
       field: 'inputs',
       error: 'activity.error.missinginputs',
-      subchecks: [
-        
-      ],
+      subchecks: [],
     },
   ],
   apicall: async (inputs, log) => {
@@ -355,7 +365,10 @@ export const activityGetOneInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityGetOne(inputs, appStore.getState().authSlice.token)
+      return await apiActivityGetOne(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -373,23 +386,25 @@ export const activityGetOneInputs = {
           type: 'activitySlice/store',
           payload: {
             activity: response.data.activity,
-          }
+          },
         })
         appStore.dispatch({
           type: 'taskSlice/change',
           payload: {
             activity: response.data.activity,
-          }
+          },
         })
       },
       'activity.getone.error.undefined': () => {
-        console.warn("getmanageresponsefunction activity.getone.error.undefined")
+        console.warn(
+          'getmanageresponsefunction activity.getone.error.undefined'
+        )
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getone: 'available'
-            }
+              getone: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -401,13 +416,13 @@ export const activityGetOneInputs = {
         })
       },
       'activity.getone.error.onfind': () => {
-        console.warn("getmanageresponsefunction activity.getone.error.onfind")
+        console.warn('getmanageresponsefunction activity.getone.error.onfind')
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getone: 'available'
-            }
+              getone: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -419,7 +434,7 @@ export const activityGetOneInputs = {
         })
       },
     }
-    console.log("WHAT IS THE response.type : " + response.type)
+    console.log('WHAT IS THE response.type : ' + response.type)
     return responses[response.type]()
   },
 }
@@ -435,10 +450,8 @@ export const activityGetManyInputs = {
       type: 'activitySlice/getmany',
       payload: {
         state: 'wip',
-        requirements: [
-          "name", "description", "tasks", "order"
-        ]
-      }
+        requirements: ['name', 'description', 'tasks', 'order'],
+      },
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -473,7 +486,10 @@ export const activityGetManyInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityGetMany(inputs, appStore.getState().authSlice.token)
+      return await apiActivityGetMany(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -491,23 +507,25 @@ export const activityGetManyInputs = {
           type: 'activitySlice/getmany',
           payload: {
             activities: response.data.activities,
-          }
+          },
         })
         appStore.dispatch({
           type: 'taskSlice/update',
           payload: {
             activities: response.data.activities,
-          }
+          },
         })
       },
       'activities.getmany.error.undefined': () => {
-        console.warn("getmanageresponsefunction activity.getone.error.undefined")
+        console.warn(
+          'getmanageresponsefunction activity.getone.error.undefined'
+        )
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getmany: 'available'
-            }
+              getmany: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -519,13 +537,13 @@ export const activityGetManyInputs = {
         })
       },
       'activity.getone.error.onfind': () => {
-        console.warn("getmanageresponsefunction activity.getone.error.onfind")
+        console.warn('getmanageresponsefunction activity.getone.error.onfind')
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getmany: 'available'
-            }
+              getmany: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -553,9 +571,9 @@ export const activityGetMineInputs = {
       type: 'activitySlice/change',
       payload: {
         state: {
-          getmine: 'wip'
-        }
-      }
+          getmine: 'wip',
+        },
+      },
     })
   },
   getinputsfunction: (log, directInputs) => {
@@ -565,7 +583,7 @@ export const activityGetMineInputs = {
       tags: ['function'],
     })
     return {
-      inputs: {...directInputs},
+      inputs: { ...directInputs },
     }
   },
   sercivechecks: [
@@ -586,7 +604,10 @@ export const activityGetMineInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityGetMine(inputs, appStore.getState().authSlice.token)
+      return await apiActivityGetMine(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -604,23 +625,25 @@ export const activityGetMineInputs = {
           type: 'activitySlice/mine',
           payload: {
             activities: response.data.activities,
-          }
+          },
         })
         appStore.dispatch({
           type: 'activitySlice/store',
           payload: {
             activities: response.data.activities,
-          }
+          },
         })
       },
       'activities.getmine.error.undefined': () => {
-        console.warn("getmanageresponsefunction activity.getone.error.undefined")
+        console.warn(
+          'getmanageresponsefunction activity.getone.error.undefined'
+        )
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getmine: 'available'
-            }
+              getmine: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -632,13 +655,13 @@ export const activityGetMineInputs = {
         })
       },
       'activity.getmine.error.onfind': () => {
-        console.warn("getmanageresponsefunction activity.getmine.error.onfind")
+        console.warn('getmanageresponsefunction activity.getmine.error.onfind')
         appStore.dispatch({
           type: 'activitySlice/change',
           payload: {
             state: {
-              getmine: 'available'
-            }
+              getmine: 'available',
+            },
           },
         })
         appStore.dispatch({
@@ -662,10 +685,10 @@ export const activityOrderInputs = {
       message: 'activityOrderInputs.getinputsfunction',
       tags: ['function'],
     })
-    console.log("directInputs",directInputs)
+    console.log('directInputs', directInputs)
     let sortedList = [...appStore.getState().activitySlice.sortedList]
     //console.log("sortedList",sortedList)
-    let activityids = sortedList.map(activity => {
+    let activityids = sortedList.map((activity) => {
       //console.log("map.activity", activity)
       return activity.activityid
     })
@@ -674,27 +697,27 @@ export const activityOrderInputs = {
     //console.log("pos",pos)
 
     let newOrder = -1
-    switch(directInputs.where) {
+    switch (directInputs.where) {
       case 'toparea':
-        newOrder = sortedList[pos-1].order
+        newOrder = sortedList[pos - 1].order
         break
       case 'bottomarea':
-        newOrder = sortedList[pos+1].order
+        newOrder = sortedList[pos + 1].order
         break
     }
     if (newOrder !== -1) {
-      console.log("newOrder",newOrder)
-      newOrder = (newOrder + sortedList[pos].order)/2
-      console.log("newOrder",newOrder)
+      console.log('newOrder', newOrder)
+      newOrder = (newOrder + sortedList[pos].order) / 2
+      console.log('newOrder', newOrder)
     }
     //console.log("newOrder",newOrder)
 
     if (newOrder !== sortedList[pos].order) {
-      return { 
+      return {
         inputs: {
           activityid: directInputs.activityid,
-          order: newOrder
-        }
+          order: newOrder,
+        },
       }
     } else {
       return {}
@@ -738,7 +761,10 @@ export const activityOrderInputs = {
       tags: ['function'],
     })
     try {
-      return await apiActivityUpdate(inputs, appStore.getState().authSlice.token)
+      return await apiActivityUpdate(
+        inputs,
+        appStore.getState().authSlice.token
+      )
     } catch (err) {
       return err
     }
@@ -756,8 +782,8 @@ export const activityOrderInputs = {
         appStore.dispatch({
           type: 'activitySlice/update',
           payload: {
-            activity: response.data.activity
-          }
+            activity: response.data.activity,
+          },
         })
       },
       'activity.update.error.onmodify': () => {

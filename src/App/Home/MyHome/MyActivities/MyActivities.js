@@ -8,11 +8,11 @@ import {
   IconButton,
   List,
   Collapse,
-  Divider
+  Divider,
 } from '@mui/material'
 import SmsFailedIcon from '@mui/icons-material/SmsFailed'
 import LinearProgress from '@mui/material/LinearProgress'
-import { TransitionGroup } from 'react-transition-group';
+import { TransitionGroup } from 'react-transition-group'
 
 import Activity from '../../../_shared/Activity/Activity.js'
 import { serviceActivityGetMine } from '../../../_services/activity/activity.services.js'
@@ -25,7 +25,7 @@ export default function MyActivities(props) {
   const { t } = useTranslation()
 
   // State
-  const [zoomLevel, setZoomLevel] = useState("0")
+  const [zoomLevel, setZoomLevel] = useState('0')
   const [dragging, setDragging] = useState(false)
 
   // Changes
@@ -41,7 +41,7 @@ export default function MyActivities(props) {
     },
     sort: (a, b) => {
       return a.order < b.order
-    }
+    },
   }
 
   // Selects
@@ -58,7 +58,7 @@ export default function MyActivities(props) {
   let c = -1
 
   return (
-    <Box 
+    <Box
       data-testid="component-my activities"
       sx={{
         display: 'flex',
@@ -66,12 +66,12 @@ export default function MyActivities(props) {
         alignItems: 'center',
         left: '5%',
         width: '90%',
-        right: '5%'
+        right: '5%',
       }}
     >
       {select.mine !== 'available' ? (
         <Box sx={{ width: '1' }}>
-          <LinearProgress/>
+          <LinearProgress />
         </Box>
       ) : select.sortedList.length === 0 ? (
         <Box
@@ -106,36 +106,37 @@ export default function MyActivities(props) {
           </Typography>
         </Box>
       ) : (
-        <List 
-          dense={false} 
+        <List
+          dense={false}
           data-testid="component-my activities#list-activities"
-          sx={{ 
+          sx={{
             width: '100%',
-            p: 0
+            p: 0,
           }}
         >
           <TransitionGroup>
-            {(select.sortedList).map((activity) => {
+            {select.sortedList.map((activity) => {
               c += 1
               return (
-                <Collapse           
-                  sx={{ 
+                <Collapse
+                  sx={{
                     width: '100%',
-                    m:0, p: 0
+                    m: 0,
+                    p: 0,
                   }}
-                  key={'activityid-'+activity.activityid}
+                  key={'activityid-' + activity.activityid}
                 >
-                  <Activity 
-                    zoomLevel={props.zoomLevel} 
-                    activityid={activity.activityid} 
+                  <Activity
+                    zoomLevel={props.zoomLevel}
+                    activityid={activity.activityid}
                     index={c}
                     dragging={dragging}
                     drag={changes.drag}
                   />
-                  <Divider 
-                    variant="middle" 
-                    component="li" 
-                    sx={{ m:0, p: 0}} 
+                  <Divider
+                    variant="middle"
+                    component="li"
+                    sx={{ m: 0, p: 0 }}
                   />
                 </Collapse>
               )

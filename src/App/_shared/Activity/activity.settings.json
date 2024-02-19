@@ -1,56 +1,56 @@
 {
-    "dragAndDrop": {
-        "0": {
-            "toparea": 0.5,
-            "bottomarea": 0.5
-        },
-        "1": {
-            "toparea": 1,
-            "bottomarea": 1
-        },
-        "2": {
-            "toparea": 1,
-            "bottomarea": 1
-        }
+  "dragAndDrop": {
+    "0": {
+      "toparea": 0.5,
+      "bottomarea": 0.5
     },
-    "requirements": {
-        "0": {
-            "name": {
-                "variant": "h6",
-                "hidden": false
-            }
-        },
-        "1": {
-            "name": {
-                "variant": "h6",
-                "hidden": false
-            },
-            "description": {
-                "variant": "h6",
-                "hidden": false,
-                "multiline": false,
-                "maxRows": 1
-            },
-            "tasks": {
-                "variant": "overline",
-                "hidden": false
-            }
-        },
-        "2": {
-            "name": {
-                "variant": "h5",
-                "hidden": false
-            },
-            "description": {
-                "variant": "body1",
-                "hidden": false,
-                "multiline": true,
-                "maxRows": 5
-            },
-            "tasks": {
-                "variant": "overline",
-                "hidden": false
-            }
-        }
+    "1": {
+      "toparea": 1,
+      "bottomarea": 1
+    },
+    "2": {
+      "toparea": 1,
+      "bottomarea": 1
     }
+  },
+  "requirements": {
+    "0": {
+      "name": {
+        "variant": "h6",
+        "hidden": false
+      }
+    },
+    "1": {
+      "name": {
+        "variant": "h6",
+        "hidden": false
+      },
+      "description": {
+        "variant": "h6",
+        "hidden": false,
+        "multiline": false,
+        "maxRows": 1
+      },
+      "tasks": {
+        "variant": "overline",
+        "hidden": false
+      }
+    },
+    "2": {
+      "name": {
+        "variant": "h5",
+        "hidden": false
+      },
+      "description": {
+        "variant": "body1",
+        "hidden": false,
+        "multiline": true,
+        "maxRows": 5
+      },
+      "tasks": {
+        "variant": "overline",
+        "hidden": false
+      }
+    }
+  }
 }

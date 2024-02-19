@@ -26,7 +26,7 @@ const slices = {
   taskModalSlice: taskModalSlice,
   passwordResetSlice: passwordResetSlice,
   // Admin
-  adminSlice: adminSlice
+  adminSlice: adminSlice,
 }
 
 export default configureStore({

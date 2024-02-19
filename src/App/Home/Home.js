@@ -26,13 +26,10 @@ export default function Home() {
   }
 
   return (
-    <Box
-      data-testid="page-home"
-      sx={{ width: '100%' }}
-    >
+    <Box data-testid="page-home" sx={{ width: '100%' }}>
       <Appbar route="home" title={t('generic.label.product')} />
       <Box sx={{ height: 60 }} />
-      
+
       {select.loaded === false ? (
         <Box sx={{ left: '10%', right: '10%' }}>
           <LinearProgress />
@@ -40,9 +37,7 @@ export default function Home() {
       ) : select.signedin === false ? (
         <Landing />
       ) : select.userState.details === 'available' ? (
-        <Box
-          sx={{ width: '100%' }}
-        >
+        <Box sx={{ width: '100%' }}>
           {select.usertype === 'user' || select.usertype === 'admin' ? (
             <MyHome />
           ) : // Means user is patient / not yet available

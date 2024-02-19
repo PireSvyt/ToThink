@@ -14,10 +14,10 @@ export default function MyHome() {
   }
   // i18n
   const { t } = useTranslation()
-  
+
   // State
-  const [zoomLevel, setZoomLevel] = useState("0")
-  
+  const [zoomLevel, setZoomLevel] = useState('0')
+
   // Changes
   let changes = {
     set: (newZoomLevel) => {
@@ -26,24 +26,20 @@ export default function MyHome() {
   }
 
   return (
-    <Box 
+    <Box
       data-testid="component-my home"
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        height: '100%'
+        height: '100%',
       }}
-    >    
-      <Box
-        sx={{height: 60}}
-      />
+    >
+      <Box sx={{ height: 60 }} />
       <CToolbar zoomLevel={zoomLevel} set={changes.set} />
-      <MyActivities zoomLevel={zoomLevel}/>
-      <Box
-        sx={{height: 50}}
-      />
+      <MyActivities zoomLevel={zoomLevel} />
+      <Box sx={{ height: 50 }} />
     </Box>
   )
 }

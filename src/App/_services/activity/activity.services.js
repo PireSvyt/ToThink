@@ -6,7 +6,7 @@ import {
   activityGetOneInputs,
   activityGetManyInputs,
   activityGetMineInputs,
-  activityOrderInputs
+  activityOrderInputs,
 } from './activity.services.inputs.js'
 // Services
 import serviceProceed from '../_services/serviceProceed.js'
@@ -59,4 +59,3 @@ export async function serviceActivityOrder(directInputs) {
   }
   await serviceProceed(activityOrderInputs, directInputs)
 }
-

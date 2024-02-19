@@ -1,10 +1,10 @@
 // APIs
-import { 
-  apiTaskCreate, 
-  apiTaskUpdate, 
-  apiTaskDelete, 
-  apiTaskGetOne, 
-  apiTaskGetMany 
+import {
+  apiTaskCreate,
+  apiTaskUpdate,
+  apiTaskDelete,
+  apiTaskGetOne,
+  apiTaskGetMany,
 } from './task.api.js'
 
 // Services
@@ -38,7 +38,7 @@ export const taskCreateInputs = {
       message: 'taskCreateInputs.getinputsfunction',
       tags: ['function'],
     })
-    return {...directInputs}
+    return { ...directInputs }
   },
   sercivechecks: [
     {
@@ -137,8 +137,8 @@ export const taskCreateInputs = {
         appStore.dispatch({
           type: 'taskSlice/storedResults',
           payload: {
-            taskid: response.data.taskid
-          }
+            taskid: response.data.taskid,
+          },
         })
       },
       'task.create.error.oncreate': () => {
@@ -146,9 +146,9 @@ export const taskCreateInputs = {
           type: 'taskSlice/change',
           payload: {
             state: {
-              storage: 'error'
-            }
-          }
+              storage: 'error',
+            },
+          },
         })
         appStore.dispatch({
           type: 'sliceSnack/change',
@@ -164,8 +164,7 @@ export const taskCreateInputs = {
   },
 }
 
-export const taskUpdateInputs = {
-}
+export const taskUpdateInputs = {}
 
 export const taskDeleteInputs = {
   getinputsfunction: (log, directInputs) => {
@@ -262,7 +261,7 @@ export const taskGetOneInputs = {
       tags: ['function'],
     })
     return {
-      inputs: {...directInputs},
+      inputs: { ...directInputs },
     }
   },
   sercivechecks: [
@@ -312,26 +311,28 @@ export const taskGetOneInputs = {
         })
       },
       'task.getanalysis.error.undefined': () => {
-        console.warn("getmanageresponsefunction task.getanalysis.error.undefined")
+        console.warn(
+          'getmanageresponsefunction task.getanalysis.error.undefined'
+        )
         appStore.dispatch({
           type: 'taskSlice/change',
           payload: {
             state: {
-              analysis: 'denied'
-            }
+              analysis: 'denied',
+            },
           },
         })
       },
       'task.getanalysis.error.onfind': () => {
-        console.warn("getmanageresponsefunction task.getanalysis.error.onfind")
+        console.warn('getmanageresponsefunction task.getanalysis.error.onfind')
         appStore.dispatch({
           type: 'taskSlice/setAnalysis',
           payload: {
             type: 'taskSlice/change',
             payload: {
               state: {
-                analysis: 'denied'
-              }
+                analysis: 'denied',
+              },
             },
           },
         })
@@ -344,11 +345,9 @@ export const taskGetOneInputs = {
         })
       },
     }
-    console.log("WHAT IS THE response.type : " + response.type)
+    console.log('WHAT IS THE response.type : ' + response.type)
     return responses[response.type]()
   },
 }
 
-export const taskGetManyInputs = {
-}
-
+export const taskGetManyInputs = {}

@@ -12,7 +12,10 @@ import {
 import MenuIcon from '@mui/icons-material/Menu.js'
 import CircularProgress from '@mui/material/CircularProgress'
 import Editable from '../Editable/Editable'
-import { serviceTaskUpdate, serviceTaskDelete } from '../../_services/task/task.services.js'
+import {
+  serviceTaskUpdate,
+  serviceTaskDelete,
+} from '../../_services/task/task.services.js'
 
 import appStore from '../../store.js'
 import ItemMenu from '../ItemMenu/ItemMenu.js'
@@ -38,36 +41,38 @@ export default function Task(props) {
       setMenuOpen(true)
     },
     onMenuItemClick: (value) => {
-      console.log("Task.changes.onMenuItemClick", value)
-      let clickedItem = menuItems.filter(menuItem => menuItem.name === value)[0]
+      console.log('Task.changes.onMenuItemClick', value)
+      let clickedItem = menuItems.filter(
+        (menuItem) => menuItem.name === value
+      )[0]
       clickedItem.onclick()
     },
     closeMenu: () => {
       setMenuOpen(false)
     },
     attemptDelete: () => {
-      console.log("Task.changes.attemptDelete")
+      console.log('Task.changes.attemptDelete')
       setConfirmOpen(true)
     },
     edit: (fieldValue) => {
-      console.log("Task.edit", fieldValue)
-      let taskChange = {...select.thisTask}
+      console.log('Task.edit', fieldValue)
+      let taskChange = { ...select.thisTask }
       taskChange[fieldValue.field] = fieldValue.value
       appStore.dispatch({
         type: 'taskSlice/change',
         payload: {
-          task: taskChange
-        }
+          task: taskChange,
+        },
       })
     },
     save: async (fieldValue) => {
-      console.log("Task.save ", fieldValue)
+      console.log('Task.save ', fieldValue)
       let directInputs = {
-        taskid: select.thisTask.taskid
+        taskid: select.thisTask.taskid,
       }
       directInputs[fieldValue.field] = fieldValue.value
       serviceTaskUpdate(directInputs)
-    }
+    },
   }
 
   // Confirm modal
@@ -85,7 +90,7 @@ export default function Task(props) {
         setConfirmOpen(false)
         setDisabled(true)
         serviceTaskDelete({
-          taskid: select.thisTask.taskid
+          taskid: select.thisTask.taskid,
         }).then(() => {
           setDisabled(false)
         })
@@ -99,14 +104,16 @@ export default function Task(props) {
     {
       name: 'duplicate',
       label: 'generic.button.duplicate',
-      onclick: () => {console.log("TODO duplicate")},
-      disabled: true
+      onclick: () => {
+        console.log('TODO duplicate')
+      },
+      disabled: true,
     },
     {
       name: 'delete',
       label: 'generic.button.delete',
-      onclick: changes.attemptDelete
-    }
+      onclick: changes.attemptDelete,
+    },
   ]
 
   let c = -1
@@ -116,22 +123,22 @@ export default function Task(props) {
   } else {
     return (
       <Box
-        data-testid={props.prefix+"list-tasks#listitem-"+props.index}
+        data-testid={props.prefix + 'list-tasks#listitem-' + props.index}
         taskid={select.thisTask.taskid}
         sx={{ width: '100%' }}
         bgcolor={'white'}
       >
-        { props.zoomLevel === "1" ? (
+        {props.zoomLevel === '1' ? (
           <Box
-            data-testid={props.prefix+"list-tasks#listitem-"+props.index}
+            data-testid={props.prefix + 'list-tasks#listitem-' + props.index}
             taskid={select.thisTask.taskid}
-            sx={{ 
+            sx={{
               width: '100%',
               display: 'flex',
               direction: 'row',
               justifyContent: 'space-between',
               width: '100%',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <Box
@@ -139,35 +146,35 @@ export default function Task(props) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
-              <Editable 
+              <Editable
                 type={'TextField'}
-                field={'name'} 
-                value={select.thisTask.name} 
-                save={changes.save} 
-                edit={changes.edit} 
+                field={'name'}
+                value={select.thisTask.name}
+                save={changes.save}
+                edit={changes.edit}
                 zoomConstrains={taskSettings.name[props.zoomLevel]}
               />
               <Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
-              >       
-                <Editable 
+              >
+                <Editable
                   type={'Select'}
-                  field={'state'} 
-                  value={select.thisTask.state} 
+                  field={'state'}
+                  value={select.thisTask.state}
                   values={taskSettings.state.values}
-                  save={changes.save} 
-                  edit={changes.edit} 
+                  save={changes.save}
+                  edit={changes.edit}
                   zoomConstrains={taskSettings.state[props.zoomLevel]}
                 />
-                <ItemMenu 
-                  prefix={props.prefix+"list-tasks#listitem-"+props.index}
+                <ItemMenu
+                  prefix={props.prefix + 'list-tasks#listitem-' + props.index}
                   menuItems={menuItems}
                   onclick={changes.onMenuItemClick}
                   disabled={disabled}
@@ -177,7 +184,7 @@ export default function Task(props) {
           </Box>
         ) : (
           <Box
-            data-testid={props.prefix+"list-tasks#listitem-"+props.index}
+            data-testid={props.prefix + 'list-tasks#listitem-' + props.index}
             taskid={select.thisTask.taskid}
             sx={{ width: '100%' }}
           >
@@ -186,39 +193,39 @@ export default function Task(props) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
-              <Editable 
-                value={select.thisTask.name} 
-                type={'TextField'} 
-                field={'name'} 
-                save={changes.save} 
-                edit={changes.edit} 
+              <Editable
+                value={select.thisTask.name}
+                type={'TextField'}
+                field={'name'}
+                save={changes.save}
+                edit={changes.edit}
                 zoomConstrains={taskSettings.name[props.zoomLevel]}
               />
-              <ItemMenu 
-                prefix={props.prefix+"list-tasks#listitem-"+props.index}
+              <ItemMenu
+                prefix={props.prefix + 'list-tasks#listitem-' + props.index}
                 menuItems={menuItems}
                 onclick={changes.onMenuItemClick}
               />
             </Box>
 
-            <Editable 
-              type={'TextField'} 
-              field={'description'}  
+            <Editable
+              type={'TextField'}
+              field={'description'}
               value={select.thisTask.description}
-              save={changes.save} 
-              edit={changes.edit} 
+              save={changes.save}
+              edit={changes.edit}
               zoomConstrains={taskSettings.description[props.zoomLevel]}
             />
-            <Editable 
+            <Editable
               type={'Select'}
-              field={'state'} 
-              value={select.thisTask.state} 
+              field={'state'}
+              value={select.thisTask.state}
               values={taskSettings.state.values}
-              save={changes.save} 
-              edit={changes.edit} 
+              save={changes.save}
+              edit={changes.edit}
               zoomConstrains={taskSettings.state[props.zoomLevel]}
             />
           </Box>
@@ -247,6 +254,6 @@ export default function Task(props) {
           />
         )}
       </Box>
-    )    
+    )
   }
 }

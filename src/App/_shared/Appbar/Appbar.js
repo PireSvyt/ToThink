@@ -80,7 +80,7 @@ export default function Appbar(props) {
     },
     close: () => {
       history.back()
-    }
+    },
   }
 
   // MenuItems
@@ -172,7 +172,7 @@ export default function Appbar(props) {
         sx={{
           top: 0,
           bottom: 'auto',
-          width: '100%'
+          width: '100%',
         }}
         color={props.route === 'admin' ? 'error' : 'primary'}
         data-testid="component-app bar"
@@ -238,7 +238,7 @@ export default function Appbar(props) {
                         return (
                           <MenuItem
                             hidden={!(item.signed && select.signedin)}
-                            data-testid={'list-app bar menu#listitem-'+c}
+                            data-testid={'list-app bar menu#listitem-' + c}
                             key={random_id()}
                             onClick={item.onclick}
                           >
@@ -250,7 +250,7 @@ export default function Appbar(props) {
                           return (
                             <MenuItem
                               hidden={!(item.signed && select.signedin)}
-                              data-testid={'list-app bar menu#listitem-'+c}
+                              data-testid={'list-app bar menu#listitem-' + c}
                               key={random_id()}
                               onClick={item.onclick}
                             >
