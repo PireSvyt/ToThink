@@ -64,12 +64,12 @@ export default function Activity(props) {
     },
     edit: (fieldValue) => {
       console.log('Activity.edit', fieldValue)
-      let activityChange = { ...select.activity }
+      let activityChange = { activityid: props.activityid }
       activityChange[fieldValue.field] = fieldValue.value
       appStore.dispatch({
-        type: 'activitySlice/change',
+        type: 'activitySlice/update',
         payload: {
-          activity: activityChange,
+          activity: activityChange
         },
       })
     },
@@ -84,17 +84,15 @@ export default function Activity(props) {
       })
     },
     save: async (fieldValue) => {
-      //console.log("Activity.save ", fieldValue)
-      if (select.activity[fieldValue.field] !== fieldValue.value) {
-        let directInputs = {
-          activityid: props.activityid,
-        }
-        directInputs[fieldValue.field] = fieldValue.value
-        serviceActivityUpdate(directInputs)
+      console.log("Activity.save ", fieldValue, select.activity)
+      let directInputs = {
+        activityid: props.activityid,
       }
+      directInputs[fieldValue.field] = fieldValue.value
+      serviceActivityUpdate(directInputs)
     },
     drag: (e) => {
-      console.log('DRAG ' + e.target.key)
+      //console.log('DRAG')
       // https://www.w3schools.com/html/html5_draganddrop.asp
       e.dataTransfer.setData('text', props.activityid)
       props.drag(true)
@@ -107,7 +105,7 @@ export default function Activity(props) {
     },
     drop: (e) => {
       // https://www.w3schools.com/html/html5_draganddrop.asp
-      //e.preventDefault();
+      e.preventDefault();
       setDragged(false)
       props.drag(false)
       serviceActivityOrder({

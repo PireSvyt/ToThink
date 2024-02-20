@@ -24,7 +24,11 @@ export default function Landing() {
 
   // Render
   return (
-    <Box data-testid="component-landing" textAlign="center">
+    <Box 
+      data-testid="component-landing" 
+      textAlign="center"
+      sx={{p:5}}
+    >
       <WelcomeCarousel />
       <Button
         onClick={changes.signin}

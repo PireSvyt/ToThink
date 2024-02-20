@@ -22,6 +22,7 @@ export async function serviceActivityUpdate(directInputs) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
     console.log('serviceActivityUpdate')
   }
+  console.log('serviceActivityUpdate')
   await serviceProceed(activityUpdateInputs, directInputs)
 }
 

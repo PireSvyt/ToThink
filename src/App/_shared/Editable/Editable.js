@@ -39,9 +39,16 @@ export default function Editable(props) {
   const { t } = useTranslation()
 
   // Confirm modal
+  const [initialValue, setInitialValue] = useState(null)
   const [readOnly, setReadOnly] = useState(true)
   const [saving, setSaving] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
+
+  if (initialValue === null 
+    && props.value !== undefined 
+    && props.value[props.field] !== undefined) {
+    setInitialValue(props.value[props.field])
+  }
 
   // Changes
   let changes = {
@@ -69,12 +76,17 @@ export default function Editable(props) {
       }
     },
     save: async () => {
-      setSaving(true)
-      await props.changes.save({
-        field: props.field,
-        value: props.value[props.field],
-      })
-      setSaving(false)
+      /*console.log('Editable.save', props.field)
+      console.log('"'+initialValue+'" initial')
+      console.log('"'+props.value[props.field]+'" new')*/
+      if (initialValue !== props.value[props.field]) {
+        setSaving(true)
+        await props.changes.save({
+          field: props.field,
+          value: props.value[props.field],
+        })
+        setSaving(false)
+      }
     },
   }
 

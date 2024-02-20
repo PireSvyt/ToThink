@@ -20,7 +20,7 @@ export default function WelcomeCarousel() {
   const { t } = useTranslation()
 
   // Constants
-  const componentHeight = window.innerHeight - 260
+  const componentHeight = window.innerHeight - 280
 
   const items = [
     <Box
@@ -32,7 +32,11 @@ export default function WelcomeCarousel() {
         alignItems: 'center',
       }}
     >
-      <Typography sx={{ whiteSpace: 'pre-line' }}>
+      <Typography 
+        sx={{ 
+          whiteSpace: 'pre-line'
+        }}
+      >
         {t('home.label.carousel1')}
       </Typography>
       <Box

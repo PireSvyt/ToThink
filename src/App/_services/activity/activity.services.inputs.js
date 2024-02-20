@@ -52,7 +52,7 @@ export const activityCreateInputs = {
       'appStore.getState().activitySlice.activities',
       appStore.getState().activitySlice.activities
     )
-    inputs.order = 1 + max
+    inputs.order = 1000 + max
     return { inputs: inputs }
   },
   sercivechecks: [
@@ -224,7 +224,7 @@ export const activityUpdateInputs = {
         appStore.dispatch({
           type: 'activitySlice/update',
           payload: {
-            activity: response.data.activity,
+            activity: response.data.update,
           },
         })
       },
@@ -782,7 +782,7 @@ export const activityOrderInputs = {
         appStore.dispatch({
           type: 'activitySlice/update',
           payload: {
-            activity: response.data.activity,
+            activity: response.data.update,
           },
         })
       },
