@@ -3,12 +3,12 @@ import axios from 'axios'
 
 let apiURL = process.env.REACT_APP_SERVER_URL
 
-export async function apiTaskCreate(taskCreateInputs, token) {
+export async function apiToThinkCreate(tothinkCreateInputs, token) {
   try {
     const res = await axios({
       method: 'post',
-      url: apiURL + 'task/v1/create',
-      data: taskCreateInputs,
+      url: apiURL + 'tothink/v1/create',
+      data: tothinkCreateInputs,
       headers: {
         Authorization: 'Bearer ' + token,
       },
@@ -19,12 +19,12 @@ export async function apiTaskCreate(taskCreateInputs, token) {
   }
 }
 
-export async function apiTaskUpdate(taskUpdateInputs, token) {
+export async function apiToThinkUpdate(tothinkUpdateInputs, token) {
   try {
     const res = await axios({
       method: 'post',
-      url: apiURL + 'task/v1/update',
-      data: taskUpdateInputs,
+      url: apiURL + 'tothink/v1/update',
+      data: tothinkUpdateInputs,
       headers: {
         Authorization: 'Bearer ' + token,
       },
@@ -35,11 +35,11 @@ export async function apiTaskUpdate(taskUpdateInputs, token) {
   }
 }
 
-export async function apiTaskDelete(deleteInputs, token) {
+export async function apiToThinkDelete(deleteInputs, token) {
   try {
     const res = await axios({
       method: 'post',
-      url: apiURL + 'task/v1/delete',
+      url: apiURL + 'tothink/v1/delete',
       data: deleteInputs,
       headers: {
         Authorization: 'Bearer ' + token,
@@ -51,11 +51,11 @@ export async function apiTaskDelete(deleteInputs, token) {
   }
 }
 
-export async function apiTaskGetOne(getInputs, token) {
+export async function apiToThinkGetOne(getInputs, token) {
   try {
     const res = await axios({
       method: 'post',
-      url: apiURL + 'task/v1/getone',
+      url: apiURL + 'tothink/v1/getone',
       data: getInputs,
       headers: {
         Authorization: 'Bearer ' + token,
@@ -67,11 +67,11 @@ export async function apiTaskGetOne(getInputs, token) {
   }
 }
 
-export async function apiTaskGetMany(getManyInputs, token) {
+export async function apiToThinkGetMany(getManyInputs, token) {
   try {
     const res = await axios({
       method: 'post',
-      url: apiURL + 'task/v1/getmany',
+      url: apiURL + 'tothink/v1/getmany',
       data: getManyInputs,
       headers: {
         Authorization: 'Bearer ' + token,

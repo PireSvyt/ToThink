@@ -5,27 +5,27 @@ import { Box, Skeleton, IconButton } from '@mui/material'
 
 import appStore from '../../../../../store.js'
 import {
-  serviceTaskUpdate,
-  serviceTaskDelete,
-} from '../../../../../_services/task/task.services.js'
+  serviceToThinkUpdate,
+  serviceToThinkDelete,
+} from '../../../../../_services/tothink/tothink.services.js'
 import ConfirmModal from '../../../../../_shared/ConfirmModal/ConfirmModal.js'
 import ItemMenu from '../../../../../_shared/ItemMenu/ItemMenu.js'
 import Editable from '../../../../../_shared/Editable/Editable.js'
 import Selectable from '../../../../../_shared/Selectable/Selectable.js'
 import DatePickable from '../../../../../_shared/DatePickable/DatePickable.js'
-import taskSettings from './task.settings.json'
+import tothinkSettings from './tothink.settings.json'
 
 
-export default function Task(props) {
+export default function ToThink(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
-    //console.log('Task ' + props.taskid)
+    //console.log('ToThink ' + props.tothinkid)
   }
   // i18n
   const { t } = useTranslation()
 
   // Selects
   const select = {
-    task: useSelector((state) => state.taskSlice.tasks[props.taskid]),
+    tothink: useSelector((state) => state.tothinkSlice.tothinks[props.tothinkid]),
   }
 
   // Changes
@@ -47,23 +47,23 @@ export default function Task(props) {
       setConfirmOpen(true)
     },
     edit: (fieldValue) => {
-      console.log('Task.edit', fieldValue)
-      let taskChange = { ...select.task }
-      taskChange[fieldValue.field] = fieldValue.value
+      console.log('ToThink.edit', fieldValue)
+      let tothinkChange = { ...select.tothink }
+      tothinkChange[fieldValue.field] = fieldValue.value
       appStore.dispatch({
-        type: 'taskSlice/update',
+        type: 'tothinkSlice/update',
         payload: {
-          task: taskChange,
+          tothink: tothinkChange,
         },
       })
     },
     save: async (fieldValue) => {
-      console.log('Task.save ', fieldValue, select.task)
+      console.log('ToThink.save ', fieldValue, select.tothink)
       let directInputs = {
-        taskid: props.taskid,
+        tothinkid: props.tothinkid,
       }
       directInputs[fieldValue.field] = fieldValue.value
-      serviceTaskUpdate(directInputs)
+      serviceToThinkUpdate(directInputs)
     },
   }
 
@@ -79,14 +79,14 @@ export default function Task(props) {
       case 'delete':
         setConfirmOpen(false)
         setDisabled(true)
-        serviceTaskDelete({
-          taskid: props.taskid,
+        serviceToThinkDelete({
+          tothinkid: props.tothinkid,
         }).then(() => {
           setDisabled(false)
         })
         break
       default:
-        console.error('Task.confirmCallback unmatched ' + choice)
+        console.error('ToThink.confirmCallback unmatched ' + choice)
     }
   }
 
@@ -110,31 +110,31 @@ export default function Task(props) {
     <Box sx={{ width: '100%' }}>
       <Skeleton
         variant="text"
-        sx={{ typography: taskSettings.requirements[0].name.variant}}
+        sx={{ typography: tothinkSettings.requirements[0].name.variant}}
         width={Math.random() * 60 + 20 + '%'}
       />
     </Box>
   )
 
-  //console.log("TASK : I RENDER!", select.task)
+  //console.log("TASK : I RENDER!", select.tothink)
   let c = -1
   return (
     <Box sx={{ width: '100%', m: 0, p: 0 }}>
-      {select.task === undefined ? (
+      {select.tothink === undefined ? (
         skeleton
       ) : (
         <Box sx={{ width: '100%', m: 0, p: 0 }}>
-          {select.task.availabilities === undefined ? (
+          {select.tothink.availabilities === undefined ? (
             skeleton
           ) : (
             <Box
-              data-testid={props.prefix + 'list-tasks#listitem-' + props.index}
-              taskid={props.taskid}
+              data-testid={props.prefix + 'list-tothinks#listitem-' + props.index}
+              tothinkid={props.tothinkid}
               sx={{ width: '100%' }}
               bgcolor={'white'}
             >
                 <Box
-                  taskid={props.taskid}
+                  tothinkid={props.tothinkid}
                   sx={{
                     width: '100%',
                     display: 'flex',
@@ -154,11 +154,11 @@ export default function Task(props) {
                   >
 
                     <Editable
-                      prefix={props.prefix + 'list-tasks#listitem-' + props.index}
-                      value={select.task}
+                      prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
+                      value={select.tothink}
                       field={'name'}
                       changes={changes}
-                      settings={taskSettings.requirements[props.zoomLevel]}
+                      settings={tothinkSettings.requirements[props.zoomLevel]}
                       disabled={disabled || props.dragging}
                     />
 
@@ -169,18 +169,18 @@ export default function Task(props) {
                       }}
                     >
                       <Selectable
-                        prefix={props.prefix + 'list-tasks#listitem-' + props.index}
-                        value={select.task}
-                        values={taskSettings.values}
+                        prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
+                        value={select.tothink}
+                        values={tothinkSettings.values}
                         field={'state'}
                         changes={changes}
                         settings={
-                          taskSettings.requirements[props.zoomLevel]
+                          tothinkSettings.requirements[props.zoomLevel]
                         }
                         disabled={disabled || props.dragging}
                       />
                       <ItemMenu
-                        prefix={props.prefix + 'list-tasks#listitem-' + props.index}
+                        prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
                         menuItems={menuItems}
                         onclick={changes.onMenuItemClick}
                         disabled={disabled || props.dragging}
@@ -192,59 +192,59 @@ export default function Task(props) {
                 </Box>
                     
                 <Editable
-                  prefix={props.prefix + 'list-tasks#listitem-' + props.index}
-                  value={select.task}
+                  prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
+                  value={select.tothink}
                   field={'description'}
                   changes={changes}
                   settings={
-                    taskSettings.requirements[props.zoomLevel]
+                    tothinkSettings.requirements[props.zoomLevel]
                   }
                   disabled={disabled || props.dragging}
                 />
 
-                {taskSettings.requirements[props.zoomLevel].reminderType === undefined ? (null) : (
+                {tothinkSettings.requirements[props.zoomLevel].reminderType === undefined ? (null) : (
                     <Box
                       sx={{
                         width: '100%',
                       }}
                     >
                     <Selectable
-                      prefix={props.prefix + 'list-tasks#listitem-' + props.index}
-                      value={select.task}
-                      values={taskSettings.values}
+                      prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
+                      value={select.tothink}
+                      values={tothinkSettings.values}
                       field={'reminderType'}
                       changes={changes}
                       settings={
-                        taskSettings.requirements[props.zoomLevel]
+                        tothinkSettings.requirements[props.zoomLevel]
                       }
                       disabled={disabled || props.dragging}
                     />
 
-                      {select.task.reminderType === undefined ? (null) : (
+                      {select.tothink.reminderType === undefined ? (null) : (
                         <Box
                           sx={{
                             width: '100%',
                           }}
                         >
-                          {select.task.reminderType !== 'oneshot' ? (null) : (
+                          {select.tothink.reminderType !== 'oneshot' ? (null) : (
                             <Box
                               sx={{
                                 width: '100%',
                               }}
                             >
                               <DatePickable 
-                                prefix={props.prefix + 'list-tasks#listitem-' + props.index}
-                                value={select.task}
+                                prefix={props.prefix + 'list-tothinks#listitem-' + props.index}
+                                value={select.tothink}
                                 field={'oneshotDate'}
                                 changes={changes}
                                 settings={
-                                  taskSettings.requirements[props.zoomLevel]
+                                  tothinkSettings.requirements[props.zoomLevel]
                                 }
                                 disabled={disabled || props.dragging}
                               />
                             </Box>
                           )}
-                          {select.task.reminderType !== 'recurring' ? (null) : (
+                          {select.tothink.reminderType !== 'recurring' ? (null) : (
                             <Box
                               sx={{
                                 width: '100%',
@@ -263,8 +263,8 @@ export default function Task(props) {
                 <ConfirmModal
                   open={confirmOpen}
                   data={{
-                    title: 'task.confirm.delete.title',
-                    content: 'task.confirm.delete.content',
+                    title: 'tothink.confirm.delete.title',
+                    content: 'tothink.confirm.delete.content',
                     callToActions: [
                       {
                         label: 'generic.button.cancel',

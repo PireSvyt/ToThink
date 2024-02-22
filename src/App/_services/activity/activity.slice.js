@@ -73,7 +73,7 @@ const activitySlice = createSlice({
       let activity = { ...action.payload.activity }
       // Empty fields
       activity.description = ''
-      activity.tasks = []
+      activity.tothinks = []
       //
       activity.availabilities = getAvailabilities(activity)
       state.activities[activity.activityid] = activity
@@ -240,9 +240,9 @@ function updateActivity(a, update) {
   } else {
     console.log('no description in', update)
   }
-  if (update.tasks !== undefined) {
-    activity.tasks = update.tasks
-    activity.availabilities.tasks = 'available'
+  if (update.tothinks !== undefined) {
+    activity.tothinks = update.tothinks
+    activity.availabilities.tothinks = 'available'
   }
   //console.log("updateActivity", a, update, activity)
   return {

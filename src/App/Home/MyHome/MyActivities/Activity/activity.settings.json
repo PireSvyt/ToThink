@@ -41,7 +41,7 @@
         "multiline": true,
         "maxRows": 5
       },
-      "tasks": {
+      "tothinks": {
         "variant": "overline"
       }
     }

@@ -1,45 +1,45 @@
 // APIs
 import {
-  apiTaskCreate,
-  apiTaskUpdate,
-  apiTaskDelete,
-  apiTaskGetOne,
-  apiTaskGetMany,
-} from './task.api.js'
+  apiToThinkCreate,
+  apiToThinkUpdate,
+  apiToThinkDelete,
+  apiToThinkGetOne,
+  apiToThinkGetMany,
+} from './tothink.api.js'
 
 // Services
 import { random_id, random_string } from '../toolkit.js'
 import appStore from '../../store.js'
 import { serviceActivityGetMany } from '../activity/activity.services.js'
 
-export const taskCreateInputs = {
+export const tothinkCreateInputs = {
   lockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.lockuifunction',
+      message: 'tothinkCreateInputs.lockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/lock',
+      type: 'tothinkModalSlice/lock',
     })
   },
   unlockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.unlockuifunction',
+      message: 'tothinkCreateInputs.unlockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/unlock',
+      type: 'tothinkModalSlice/unlock',
     })
   },
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.getinputsfunction',
+      message: 'tothinkCreateInputs.getinputsfunction',
       tags: ['function'],
     })
-    return { inputs: appStore.getState().taskModalSlice.inputs }
+    return { inputs: appStore.getState().tothinkModalSlice.inputs }
   },
   sercivechecks: [
     {
@@ -65,21 +65,21 @@ export const taskCreateInputs = {
   getcheckoutcomedispatchfunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.getcheckoutcomedispatchfunction',
+      message: 'tothinkCreateInputs.getcheckoutcomedispatchfunction',
       tags: ['function'],
     })
-    return 'taskModalSlice/change'
+    return 'tothinkModalSlice/change'
   },
   apicall: async (inputs, log) => {
     console.log('apicall inputs', inputs)
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.apicall',
+      message: 'tothinkCreateInputs.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskCreate(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkCreate(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -87,21 +87,21 @@ export const taskCreateInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'taskCreateInputs.getmanageresponsefunction',
+      message: 'tothinkCreateInputs.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.create.success': () => {
-        // add task to store
+      'tothink.create.success': () => {
+        // add tothink to store
         appStore.dispatch({
-          type: 'taskSlice/change',
+          type: 'tothinkSlice/change',
           payload: {
-            task: response.data.task,
+            tothink: response.data.tothink,
           },
         })
         appStore.dispatch({
-          type: 'taskModalSlice/close',
+          type: 'tothinkModalSlice/close',
         })
         if (response.data.dependencies !== undefined) {
           if (response.data.dependencies.activityids !== undefined) {
@@ -111,7 +111,7 @@ export const taskCreateInputs = {
           }
         }
       },
-      'task.create.error.oncreate': () => {
+      'tothink.create.error.oncreate': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -121,36 +121,36 @@ export const taskCreateInputs = {
         })
       },
     }
-    //console.log("taskCreateInputs response", response)
+    //console.log("tothinkCreateInputs response", response)
     return responses[response.type]()
   },
 }
 
-export const taskUpdateInputs = {
+export const tothinkUpdateInputs = {
   /*lockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.lockuifunction',
+      message: 'tothinkUpdateInputs.lockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/lock',
+      type: 'tothinkModalSlice/lock',
     })
   },
   unlockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.unlockuifunction',
+      message: 'tothinkUpdateInputs.unlockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskModalSlice/unlock',
+      type: 'tothinkModalSlice/unlock',
     })
   },*/
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.getinputsfunction',
+      message: 'tothinkUpdateInputs.getinputsfunction',
       tags: ['function'],
     })
     return { inputs: directInputs }
@@ -163,9 +163,9 @@ export const taskUpdateInputs = {
       subchecks: [
         {
           // Check name is available
-          field: 'taskid',
-          error: 'generic.error.missingtaskid',
-          fieldsinerror: ['taskid'],
+          field: 'tothinkid',
+          error: 'generic.error.missingtothinkid',
+          fieldsinerror: ['tothinkid'],
         },
         /*{
           // Check description is available
@@ -179,21 +179,21 @@ export const taskUpdateInputs = {
   getcheckoutcomedispatchfunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.getcheckoutcomedispatchfunction',
+      message: 'tothinkUpdateInputs.getcheckoutcomedispatchfunction',
       tags: ['function'],
     })
-    return 'taskSlice/change'
+    return 'tothinkSlice/change'
   },
   apicall: async (inputs, log) => {
     console.log('apicall inputs', inputs)
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.apicall',
+      message: 'tothinkUpdateInputs.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskUpdate(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkUpdate(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -201,17 +201,17 @@ export const taskUpdateInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'taskUpdateInputs.getmanageresponsefunction',
+      message: 'tothinkUpdateInputs.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.update.success.modified': () => {
-        // add task to store
+      'tothink.update.success.modified': () => {
+        // add tothink to store
         appStore.dispatch({
-          type: 'taskSlice/change',
+          type: 'tothinkSlice/change',
           payload: {
-            task: response.data.task,
+            tothink: response.data.tothink,
           },
         })
         if (response.data.dependencies !== undefined) {
@@ -222,7 +222,7 @@ export const taskUpdateInputs = {
           }
         }
       },
-      'task.update.error.onmodify': () => {
+      'tothink.update.error.onmodify': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -232,16 +232,16 @@ export const taskUpdateInputs = {
         })
       },
     }
-    //console.log("taskUpdateInputs response", response)
+    //console.log("tothinkUpdateInputs response", response)
     return responses[response.type]()
   },
 }
 
-export const taskDeleteInputs = {
+export const tothinkDeleteInputs = {
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskDelete.getinputsfunction',
+      message: 'serviceToThinkDelete.getinputsfunction',
       tags: ['function'],
     })
     return {
@@ -255,9 +255,9 @@ export const taskDeleteInputs = {
       error: 'generic.error.missinginputs',
       subchecks: [
         {
-          // Check taskid is available
-          field: 'taskid',
-          error: 'task.error.missingtaskid',
+          // Check tothinkid is available
+          field: 'tothinkid',
+          error: 'tothink.error.missingtothinkid',
         },
       ],
     },
@@ -265,12 +265,12 @@ export const taskDeleteInputs = {
   apicall: async (inputs, log) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskDelete.apicall',
+      message: 'serviceToThinkDelete.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskDelete(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkDelete(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -278,17 +278,17 @@ export const taskDeleteInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskDelete.getmanageresponsefunction',
+      message: 'serviceToThinkDelete.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.deleteone.success': () => {
+      'tothink.deleteone.success': () => {
         console.log('DELETEONE SUCCESS', response.data)
         appStore.dispatch({
-          type: 'taskSlice/delete',
+          type: 'tothinkSlice/delete',
           payload: {
-            taskid: response.data.taskid,
+            tothinkid: response.data.tothinkid,
           },
         })
         if (response.data.dependencies !== undefined) {
@@ -299,7 +299,7 @@ export const taskDeleteInputs = {
           }
         }
       },
-      'task.deleteone.errorondelete': () => {
+      'tothink.deleteone.errorondelete': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -314,21 +314,21 @@ export const taskDeleteInputs = {
   },
 }
 
-export const taskGetOneInputs = {
+export const tothinkGetOneInputs = {
   lockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskGetOneInputs.lockuifunction',
+      message: 'tothinkGetOneInputs.lockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'taskSlice/loadAnalysis',
+      type: 'tothinkSlice/loadAnalysis',
     })
   },
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskGetOne.getinputsfunction',
+      message: 'serviceToThinkGetOne.getinputsfunction',
       tags: ['function'],
     })
     return {
@@ -339,12 +339,12 @@ export const taskGetOneInputs = {
     {
       // Check inputs root is available
       field: 'inputs',
-      error: 'task.error.missinginputs',
+      error: 'tothink.error.missinginputs',
       subchecks: [
         {
           // Check patientid is available
-          field: 'taskid',
-          error: 'patient.error.missingtaskid',
+          field: 'tothinkid',
+          error: 'patient.error.missingtothinkid',
         },
         {
           // Check patientid is available
@@ -357,12 +357,12 @@ export const taskGetOneInputs = {
   apicall: async (inputs, log) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskGetOne.apicall',
+      message: 'serviceToThinkGetOne.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskGetOne(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkGetOne(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -370,23 +370,23 @@ export const taskGetOneInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'serviceTaskGetOne.getmanageresponsefunction',
+      message: 'serviceToThinkGetOne.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.getanalysis.success': () => {
+      'tothink.getanalysis.success': () => {
         appStore.dispatch({
-          type: 'taskSlice/setAnalysis',
-          payload: response.data.task,
+          type: 'tothinkSlice/setAnalysis',
+          payload: response.data.tothink,
         })
       },
-      'task.getanalysis.error.undefined': () => {
+      'tothink.getanalysis.error.undefined': () => {
         console.warn(
-          'getmanageresponsefunction task.getanalysis.error.undefined'
+          'getmanageresponsefunction tothink.getanalysis.error.undefined'
         )
         appStore.dispatch({
-          type: 'taskSlice/change',
+          type: 'tothinkSlice/change',
           payload: {
             state: {
               analysis: 'denied',
@@ -394,12 +394,12 @@ export const taskGetOneInputs = {
           },
         })
       },
-      'task.getanalysis.error.onfind': () => {
-        console.warn('getmanageresponsefunction task.getanalysis.error.onfind')
+      'tothink.getanalysis.error.onfind': () => {
+        console.warn('getmanageresponsefunction tothink.getanalysis.error.onfind')
         appStore.dispatch({
-          type: 'taskSlice/setAnalysis',
+          type: 'tothinkSlice/setAnalysis',
           payload: {
-            type: 'taskSlice/change',
+            type: 'tothinkSlice/change',
             payload: {
               state: {
                 analysis: 'denied',
@@ -421,15 +421,15 @@ export const taskGetOneInputs = {
   },
 }
 
-export const taskGetManyInputs = {
+export const tothinkGetManyInputs = {
   lockuifunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskGetManyInputs.lockuifunction',
+      message: 'tothinkGetManyInputs.lockuifunction',
       tags: ['function'],
     })
     appStore.dispatch({
-      type: 'tasksSlice/getmany',
+      type: 'tothinksSlice/getmany',
       payload: {
         state: 'wip',
         requirements: ['name', 'description', 'state', 'order'],
@@ -439,12 +439,12 @@ export const taskGetManyInputs = {
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'taskGetManyInputs.getinputsfunction',
+      message: 'tothinkGetManyInputs.getinputsfunction',
       tags: ['function'],
     })
     let inputs = {}
-    if (directInputs.taskids !== undefined) {
-      inputs.taskids = directInputs.taskids
+    if (directInputs.tothinkids !== undefined) {
+      inputs.tothinkids = directInputs.tothinkids
     }
     if (directInputs.requirements !== undefined) {
       inputs.requirements = directInputs.requirements
@@ -463,12 +463,12 @@ export const taskGetManyInputs = {
   apicall: async (inputs, log) => {
     log.push({
       date: new Date(),
-      message: 'taskGetManyInputs.apicall',
+      message: 'tothinkGetManyInputs.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskGetMany(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkGetMany(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -476,20 +476,20 @@ export const taskGetManyInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'taskGetManyInputs.getmanageresponsefunction',
+      message: 'tothinkGetManyInputs.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.getmany.success': () => {
+      'tothink.getmany.success': () => {
         appStore.dispatch({
-          type: 'taskSlice/update',
+          type: 'tothinkSlice/update',
           payload: {
-            tasks: response.data.tasks,
+            tothinks: response.data.tothinks,
           },
         })
       },
-      'task.getmany.error.notfound': () => {
+      'tothink.getmany.error.notfound': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -498,7 +498,7 @@ export const taskGetManyInputs = {
           },
         })
       },
-      'task.getmany.error.onfind': () => {
+      'tothink.getmany.error.onfind': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -513,35 +513,35 @@ export const taskGetManyInputs = {
   },
 }
 
-export const taskDigInputs = {
+export const tothinkDigInputs = {
   getinputsfunction: (log, directInputs) => {
     log.push({
       date: new Date(),
-      message: 'taskDigInputs.getinputsfunction',
+      message: 'tothinkDigInputs.getinputsfunction',
       tags: ['function'],
     })
     //console.log('directInputs', directInputs)
-    let tasksToUpdate = []
-    if (Object.keys(appStore.getState().taskSlice.tasks).length !== 0) {
-      // Gather tasks
-      let tasks = {}
-      if (directInputs.taskids !== undefined) {
-        directInputs.taskids.forEach((taskid) => {
-          tasks[taskid] = appStore.getState().taskSlice.tasks[taskid]
+    let tothinksToUpdate = []
+    if (Object.keys(appStore.getState().tothinkSlice.tothinks).length !== 0) {
+      // Gather tothinks
+      let tothinks = {}
+      if (directInputs.tothinkids !== undefined) {
+        directInputs.tothinkids.forEach((tothinkid) => {
+          tothinks[tothinkid] = appStore.getState().tothinkSlice.tothinks[tothinkid]
         })
       } else {
-        tasks = { ...appStore.getState().taskSlice.tasks }
+        tothinks = { ...appStore.getState().tothinkSlice.tothinks }
       }
-      // Check tasks meet requirements
-      Object.keys(tasks).forEach((taskid) => {
-        let taskMeetsRequirements = true
+      // Check tothinks meet requirements
+      Object.keys(tothinks).forEach((tothinkid) => {
+        let tothinkMeetsRequirements = true
         directInputs.requirements.forEach((requirement) => {
-          if (Object.keys(tasks[taskid]).includes(requirement) === false) {
-            taskMeetsRequirements = false
+          if (Object.keys(tothinks[tothinkid]).includes(requirement) === false) {
+            tothinkMeetsRequirements = false
           }
         })
-        if (taskMeetsRequirements === false) {
-          tasksToUpdate.push(taskid)
+        if (tothinkMeetsRequirements === false) {
+          tothinksToUpdate.push(tothinkid)
         }
       })
     } else {
@@ -550,7 +550,7 @@ export const taskDigInputs = {
 
     return {
       inputs: {
-        taskids: tasksToUpdate,
+        tothinkids: tothinksToUpdate,
         requirements: directInputs.requirements,
       },
     }
@@ -566,21 +566,21 @@ export const taskDigInputs = {
   getcheckoutcomedispatchfunction: (log) => {
     log.push({
       date: new Date(),
-      message: 'taskDigInputs.getcheckoutcomedispatchfunction',
+      message: 'tothinkDigInputs.getcheckoutcomedispatchfunction',
       tags: ['function'],
     })
-    return 'taskSlice/change'
+    return 'tothinkSlice/change'
   },
   apicall: async (inputs, log) => {
     //console.log('apicall inputs', inputs)
     log.push({
       date: new Date(),
-      message: 'taskDigInputs.apicall',
+      message: 'tothinkDigInputs.apicall',
       inputs: inputs,
       tags: ['function'],
     })
     try {
-      return await apiTaskGetMany(inputs, appStore.getState().authSlice.token)
+      return await apiToThinkGetMany(inputs, appStore.getState().authSlice.token)
     } catch (err) {
       return err
     }
@@ -588,20 +588,20 @@ export const taskDigInputs = {
   getmanageresponsefunction: (response, log) => {
     log.push({
       date: new Date(),
-      message: 'taskDigInputs.getmanageresponsefunction',
+      message: 'tothinkDigInputs.getmanageresponsefunction',
       response: response,
       tags: ['function'],
     })
     let responses = {
-      'task.getmany.success': () => {
+      'tothink.getmany.success': () => {
         appStore.dispatch({
-          type: 'taskSlice/update',
+          type: 'tothinkSlice/update',
           payload: {
-            tasks: response.data.tasks,
+            tothinks: response.data.tothinks,
           },
         })
       },
-      'task.getmany.error.notfound': () => {
+      'tothink.getmany.error.notfound': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -610,7 +610,7 @@ export const taskDigInputs = {
           },
         })
       },
-      'task.getmany.error.onfind': () => {
+      'tothink.getmany.error.onfind': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -620,7 +620,7 @@ export const taskDigInputs = {
         })
       },
     }
-    //console.log("taskDigInputs response", response)
+    //console.log("tothinkDigInputs response", response)
     return responses[response.type]()
   },
 }

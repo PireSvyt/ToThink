@@ -299,11 +299,11 @@ export const activityDeleteInputs = {
             activityid: response.data.activityid,
           },
         })
-        if (response.data.taskids !== undefined) {
+        if (response.data.tothinkids !== undefined) {
           appStore.dispatch({
-            type: 'taskSlice/delete',
+            type: 'tothinkSlice/delete',
             payload: {
-              taskids: response.data.taskids,
+              tothinkids: response.data.tothinkids,
             },
           })
         }
@@ -389,7 +389,7 @@ export const activityGetOneInputs = {
           },
         })
         appStore.dispatch({
-          type: 'taskSlice/change',
+          type: 'tothinkSlice/change',
           payload: {
             activity: response.data.activity,
           },
@@ -450,7 +450,7 @@ export const activityGetManyInputs = {
       type: 'activitySlice/getmany',
       payload: {
         state: 'wip',
-        requirements: ['name', 'description', 'tasks', 'order'],
+        requirements: ['name', 'description', 'tothinks', 'order'],
       },
     })
   },
@@ -510,7 +510,7 @@ export const activityGetManyInputs = {
           },
         })
         appStore.dispatch({
-          type: 'taskSlice/update',
+          type: 'tothinkSlice/update',
           payload: {
             activities: response.data.activities,
           },
@@ -879,7 +879,7 @@ export const activityDigInputs = {
           },
         })
         appStore.dispatch({
-          type: 'taskSlice/update',
+          type: 'tothinkSlice/update',
           payload: {
             activities: response.data.activities,
           },

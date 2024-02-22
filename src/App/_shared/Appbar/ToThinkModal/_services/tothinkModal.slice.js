@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const taskModalSlice = createSlice({
-  name: 'taskModalSlice',
+const tothinkModalSlice = createSlice({
+  name: 'tothinkModalSlice',
   initialState: {
     disabled: false,
     loading: false,
@@ -63,7 +63,7 @@ const taskModalSlice = createSlice({
       state.loading = false
     },
     change: (state, action) => {
-      //console.log("taskModalSlice/change", action.payload)
+      //console.log("tothinkModalSlice/change", action.payload)
       if (action.payload.open !== undefined) {
         state.open = action.payload.open
       }
@@ -96,4 +96,4 @@ const taskModalSlice = createSlice({
   },
 })
 
-export default taskModalSlice.reducer
+export default tothinkModalSlice.reducer

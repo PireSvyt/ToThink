@@ -14,7 +14,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { TransitionGroup } from 'react-transition-group'
 import LinearProgress from '@mui/material/LinearProgress'
 
-import Task from './Task/Task.js'
+import ToThink from './ToThink/ToThink.js'
 import Editable from '../../../../_shared/Editable/Editable.js'
 import ItemMenu from '../../../../_shared/ItemMenu/ItemMenu.js'
 import appStore from '../../../../store.js'
@@ -24,7 +24,7 @@ import {
   serviceActivityOrder,
   serviceActivityGetOne,
 } from '../../../../_services/activity/activity.services.js'
-import { serviceTaskGetMany } from '../../../../_services/task/task.services.js'
+import { serviceToThinkGetMany } from '../../../../_services/tothink/tothink.services.js'
 import activitySettings from './activity.settings.json'
 import ConfirmModal from '../../../../_shared/ConfirmModal/ConfirmModal.js'
 
@@ -60,8 +60,8 @@ export default function Activity(props) {
     attemptDelete: () => {
       setConfirmOpen(true)
     },
-    getTasks: () => {
-      serviceTaskGetMany(select.activity.tasks)
+    getToThinks: () => {
+      serviceToThinkGetMany(select.activity.tothinks)
     },
     edit: (fieldValue) => {
       console.log('Activity.edit', fieldValue)
@@ -74,9 +74,9 @@ export default function Activity(props) {
         },
       })
     },
-    newTask: () => {
+    newToThink: () => {
       appStore.dispatch({
-        type: 'taskModalSlice/new',
+        type: 'tothinkModalSlice/new',
         payload: {
           inputs: {
             activityid: props.activityid,
@@ -247,7 +247,7 @@ export default function Activity(props) {
                   />
                 )}
 
-                {activitySettings.requirements[props.zoomLevel].tasks ===
+                {activitySettings.requirements[props.zoomLevel].tothinks ===
                 undefined ? null : (
                   <Box
                     // TASKS --------------------------------------------------------------
@@ -265,20 +265,20 @@ export default function Activity(props) {
                     >
                       <Typography
                         variant={
-                          activitySettings.requirements[props.zoomLevel].tasks
+                          activitySettings.requirements[props.zoomLevel].tothinks
                             .variant
                         }
                         component="span"
                       >
-                        {t('generic.label.tasks')}
+                        {t('generic.label.tothinks')}
                       </Typography>
                       <IconButton
                         data-testid={
                           'list-activities#listitem-' +
                           props.index +
-                          '#button-add task'
+                          '#button-add tothink'
                         }
-                        onClick={changes.newTask}
+                        onClick={changes.newToThink}
                         color="primary"
                         size="small"
                         disabled={disabled || props.dragging}
@@ -287,7 +287,7 @@ export default function Activity(props) {
                       </IconButton>
                     </Box>
 
-                    {select.activity.availabilities.tasks !== 'available' ? (
+                    {select.activity.availabilities.tothinks !== 'available' ? (
                       <Box
                         sx={{
                           width: '95%',
@@ -312,7 +312,7 @@ export default function Activity(props) {
                         data-testid={
                           'list-activities#listitem-' +
                           props.index +
-                          '#list-tasks'
+                          '#list-tothinks'
                         }
                         sx={{
                           width: '95%',
@@ -320,19 +320,19 @@ export default function Activity(props) {
                         }}
                       >
                         <TransitionGroup>
-                          {select.activity.tasks !== undefined
-                            ? select.activity.tasks.map((activityTask) => {
+                          {select.activity.tothinks !== undefined
+                            ? select.activity.tothinks.map((activityToThink) => {
                                 c += 1
                                 return (
                                   <Collapse
-                                    key={'task-' + activityTask.taskid}
+                                    key={'tothink-' + activityToThink.tothinkid}
                                     sx={{
                                       width: '100%',
                                       p: 0,
                                     }}
                                   >
-                                    <Task
-                                      taskid={activityTask.taskid}
+                                    <ToThink
+                                      tothinkid={activityToThink.tothinkid}
                                       index={c}
                                       prefix={
                                         'list-activities#listitem-' +

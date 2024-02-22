@@ -15,7 +15,7 @@ import ArticleIcon from '@mui/icons-material/Article'
 
 import appStore from '../../../store.js'
 import { serviceActivityDig } from '../../../_services/activity/activity.services.js'
-import { serviceTaskDig } from '../../../_services/task/task.services.js'
+import { serviceToThinkDig } from '../../../_services/tothink/tothink.services.js'
 
 export default function CToolbar(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
@@ -42,7 +42,7 @@ export default function CToolbar(props) {
       },
     },
     {
-      label: t('zoomer.label.tasklist'),
+      label: t('zoomer.label.tothinklist'),
       zoomLevel: '2',
       disabled: false,
       icon: () => {
@@ -62,18 +62,18 @@ export default function CToolbar(props) {
           console.log('DIG ACTIVITIES')
           serviceActivityDig({
             //activityids: [ LIST OF ACTIVITY IDS TO GET / OTHERWISE ALL ],
-            requirements: ['name', 'description', 'tasks', 'order'],
+            requirements: ['name', 'description', 'tothinks', 'order'],
           })
           break
         case '2':
           //console.log("DIG ACTIVITIES")
           serviceActivityDig({
             //activityids: [ LIST OF ACTIVITY IDS TO GET / OTHERWISE ALL ],
-            requirements: ['name', 'description', 'tasks', 'order'],
+            requirements: ['name', 'description', 'tothinks', 'order'],
           })
           //console.log("DIG TASKS")
-          serviceTaskDig({
-            //taskids: [ LIST OF TASK IDS TO GET / OTHERWISE ALL ],
+          serviceToThinkDig({
+            //tothinkids: [ LIST OF TASK IDS TO GET / OTHERWISE ALL ],
             requirements: ['name', 'description', 'state', 'order'],
           })
           break
@@ -87,9 +87,9 @@ export default function CToolbar(props) {
             type: 'activityModalSlice/new',
           })
           break
-        case 'task':
+        case 'tothink':
           appStore.dispatch({
-            type: 'taskModalSlice/new',
+            type: 'tothinkModalSlice/new',
           })
           break
         default:
@@ -170,10 +170,10 @@ export default function CToolbar(props) {
           </Button>
           <Button
             onClick={() => {
-              changes.new('task')
+              changes.new('tothink')
             }}
           >
-            {t('generic.label.task')}
+            {t('generic.label.tothink')}
           </Button>
           <Button
             onClick={() => {

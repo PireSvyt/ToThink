@@ -22,7 +22,7 @@ import { serviceAuthAccessDeny } from '../../_services/auth/auth.services.js'
 import LanguageSwitcher from './/LanguageSwitcher/LanguageSwitcher.js'
 import SignInModal from './SignInModal/SignInModal.js'
 import ActivityModal from './ActivityModal/ActivityModal.js'
-import TaskModal from './TaskModal/TaskModal.js'
+import ToThinkModal from './ToThinkModal/ToThinkModal.js'
 
 export default function Appbar(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
@@ -41,7 +41,7 @@ export default function Appbar(props) {
     usertype: useSelector((state) => state.userSlice.type),
     signInModal: useSelector((state) => state.signinModalSlice.open),
     activityModal: useSelector((state) => state.activityModalSlice.open),
-    taskModal: useSelector((state) => state.taskModalSlice.open),
+    tothinkModal: useSelector((state) => state.tothinkModalSlice.open),
   }
 
   // Handles
@@ -281,7 +281,7 @@ export default function Appbar(props) {
 
       {select.signInModal === true ? <SignInModal /> : null}
       {select.activityModal === true ? <ActivityModal /> : null}
-      {select.taskModal === true ? <TaskModal /> : null}
+      {select.tothinkModal === true ? <ToThinkModal /> : null}
     </Box>
   )
 }

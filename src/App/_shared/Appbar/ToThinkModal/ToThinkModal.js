@@ -17,13 +17,13 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { useSelector } from 'react-redux'
 
 // Services
-import { serviceTaskCreate } from '../../../_services/task/task.services.js'
+import { serviceToThinkCreate } from '../../../_services/tothink/tothink.services.js'
 // Reducers
 import appStore from '../../../store.js'
 
-export default function TaskModal() {
+export default function ToThinkModal() {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
-    //console.log("TaskModal");
+    //console.log("ToThinkModal");
   }
   // i18n
   const { t } = useTranslation()
@@ -33,11 +33,11 @@ export default function TaskModal() {
 
   // Selects
   const select = {
-    open: useSelector((state) => state.taskModalSlice.open),
-    disabled: useSelector((state) => state.taskModalSlice.disabled),
-    loading: useSelector((state) => state.taskModalSlice.loading),
-    inputs: useSelector((state) => state.taskModalSlice.inputs),
-    errors: useSelector((state) => state.taskModalSlice.errors),
+    open: useSelector((state) => state.tothinkModalSlice.open),
+    disabled: useSelector((state) => state.tothinkModalSlice.disabled),
+    loading: useSelector((state) => state.tothinkModalSlice.loading),
+    inputs: useSelector((state) => state.tothinkModalSlice.inputs),
+    errors: useSelector((state) => state.tothinkModalSlice.errors),
     activities: useSelector((state) => state.activitySlice.activities),
   }
 
@@ -45,12 +45,12 @@ export default function TaskModal() {
   const changes = {
     close: () => {
       appStore.dispatch({
-        type: 'taskModalSlice/close',
+        type: 'tothinkModalSlice/close',
       })
     },
     name: (e) => {
       appStore.dispatch({
-        type: 'taskModalSlice/change',
+        type: 'tothinkModalSlice/change',
         payload: {
           inputs: {
             name: e.target.value,
@@ -63,7 +63,7 @@ export default function TaskModal() {
     },
     activityid: (e) => {
       appStore.dispatch({
-        type: 'taskModalSlice/change',
+        type: 'tothinkModalSlice/change',
         payload: {
           inputs: {
             activityid: e.target.value,
@@ -75,8 +75,8 @@ export default function TaskModal() {
       })
     },
     create: () => {
-      console.log('TaskModal.create')
-      serviceTaskCreate()
+      console.log('ToThinkModal.create')
+      serviceToThinkCreate()
     },
   }
 
@@ -89,9 +89,9 @@ export default function TaskModal() {
         open={select.open}
         onClose={changes.close}
         fullWidth={true}
-        data-testid="modal-task"
+        data-testid="modal-tothink"
       >
-        <DialogTitle>{t('task.label.new')}</DialogTitle>
+        <DialogTitle>{t('tothink.label.new')}</DialogTitle>
         <DialogContent
         /*sx={{
             height: componentHeight,
@@ -115,7 +115,7 @@ export default function TaskModal() {
                 onChange={changes.name}
                 autoComplete="off"
                 error={select.errors.name}
-                data-testid="modal-task#input-name"
+                data-testid="modal-tothink#input-name"
               />
 
               <Select
@@ -126,7 +126,7 @@ export default function TaskModal() {
                 value={select.inputs.activityid}
                 onChange={changes.activityid}
                 error={select.errors.activityid}
-                data-testid="modal-task#input-activityid"
+                data-testid="modal-tothink#input-activityid"
               >
                 <MenuItem value="" key={'act-' + ''}>
                   <em>{t('generic.label.none')}</em>
@@ -148,7 +148,7 @@ export default function TaskModal() {
         </DialogContent>
 
         <DialogActions>
-          <Button data-testid="modal-task#button-close" onClick={changes.close}>
+          <Button data-testid="modal-tothink#button-close" onClick={changes.close}>
             {t('generic.button.cancel')}
           </Button>
           <LoadingButton
@@ -156,7 +156,7 @@ export default function TaskModal() {
             onClick={changes.create}
             disabled={select.disabled}
             loading={select.loading}
-            data-testid="modal-task#button-proceed"
+            data-testid="modal-tothink#button-proceed"
           >
             {t('generic.button.proceed')}
           </LoadingButton>
