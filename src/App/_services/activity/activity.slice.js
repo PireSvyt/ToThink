@@ -18,6 +18,18 @@ const activitySlice = createSlice({
     mine: (state, action) => {
       // Store the activities
       //console.log("activitySlice.mine", action.payload)
+
+      // Activities
+      let activities = {}
+      action.payload.activities.forEach((activity) => {
+        //console.log("ADDING ACTIVITY", activity)
+        let updatedActivity = { ...activity }
+        updatedActivity.availabilities = getAvailabilities(updatedActivity)
+        activities[updatedActivity.activityid] = { ...updatedActivity }
+      })
+      state.activities = activities
+      //console.log("ADDING ACTIVITIES", activities)
+
       state.sortedList = action.payload.activities
       state.state.getmine = 'available'
     },
@@ -96,6 +108,7 @@ const activitySlice = createSlice({
       state.sortedList = sortedList
     },
     update: (state, action) => {
+      //console.log("activitySlice.update", action.payload)
       // Update an activity
       let sortedList = [...state.sortedList]
       let toSort = false
@@ -105,51 +118,61 @@ const activitySlice = createSlice({
           { ...state.activities[action.payload.activity.activityid] },
           action.payload.activity
         )
-        state.activities[action.payload.activity.activityid] = updatedActivity.activity
-        if (updatedActivity.reorder) {
+        console.log('updatedActivity (single)', updatedActivity)
+        state.activities[action.payload.activity.activityid] =
+          updatedActivity.activity
+        if (updatedActivity.reorder !== -1) {
           // SortedList
           let activityids = sortedList.map((a) => {
             return a.activityid
           })
           let pos = activityids.indexOf(action.payload.activity.activityid)
-          sortedList[pos].order = action.payload.activity.order
-          toSort = updatedActivity.reorder
+          sortedList[pos].order = updatedActivity.reorder
+          toSort = true
         }
       }
       // Activities
       if (action.payload.activities !== undefined) {
-        action.payload.activities.forEach((activityUpdate) => {
+        let activities = { ...state.activities }
+        //console.log('initial activities', activities)
+        Object.entries(action.payload.activities).forEach((activity) => {
+          //console.log("forEach activity", activity)
           let updatedActivity = updateActivity(
-            { ...state.activities[action.payload.activity.activityid] },
-            activityUpdate
+            { ...activities[activity[1].activityid] },
+            { ...activity[1] }
           )
-          state.activities[activityUpdate.activityid] = updatedActivity.activity
-          if (updatedActivity.reorder) {
+          //console.log('updatedActivity.activity', updatedActivity.activity)
+          activities[activity[1].activityid] = { ...updatedActivity.activity }
+          if (updatedActivity.reorder !== -1) {
             // SortedList
+            toSort = true
             let activityids = sortedList.map((a) => {
               return a.activityid
             })
-            let pos = activityids.indexOf(activityUpdate.activityid)
-            sortedList[pos].order = activityUpdate.order
-            toSort = updatedActivity.reorder
+            let pos = activityids.indexOf(activity[1].activityid)
+            if (pos !== -1) {
+              sortedList[pos].order = updatedActivity.reorder
+            }
           }
         })
+        //console.log('final activities', activities)
+        state.activities = activities
       }
 
       // Sorted list
       if (toSort === true) {
-        console.log('SORT')
+        //console.log('SORT', sortedList)
         sortedList.sort((a, b) => {
           let c = { ...a }
           let d = { ...b }
           return d.order - c.order
         })
-        console.log('sortedList', sortedList)
+        //console.log('sortedList', sortedList)
         state.sortedList = sortedList
       }
     },
     change: (state, action) => {
-      console.log('activitySlice.change', action.payload)
+      //console.log('activitySlice.change', action.payload)
       if (action.payload.state !== undefined) {
         if (action.payload.state.getmine !== undefined) {
           state.state.getmine = action.payload.state.getmine
@@ -170,45 +193,6 @@ const activitySlice = createSlice({
           state.state.delete = action.payload.state.delete
         }
       }
-      // get one
-      /*if (action.payload.activity !== undefined) {
-        let currentActivity = {
-          ...state.activities[action.payload.activity.activityid],
-        }
-        Object.keys(action.payload.activity).forEach((k) => {
-          currentActivity[k] = action.payload.activity[k]
-        })
-        state.activities[action.payload.activity.activityid] = currentActivity
-      }*/
-      /*
-      // get many
-      if (action.payload.activities !== undefined) {
-        action.payload.activities.forEach(activity => {
-          state.activities[activity.activityid] = activity
-        });
-      }
-      // task
-      if (action.payload.task !== undefined) {
-        let impactedActivities = []
-        impactedActivities = Object.entries(state.activities).filter(
-          activity => activity.tasks.map(
-            activityTask => activityTask.taskid
-          ).includes(action.payload.task.taskid)
-        )
-        impactedActivities.forEach(impactedActivity => {
-          let currentTasks = {...impactedActivities.tasks}
-          currentTasks.forEach(currentTask => {
-            if (currentTask.taskid === action.payload.task.taskid) {
-              currentTasks[currentTask.taskid] = action.payload.task
-            }
-          })
-          impactedActivity.tasks = currentTasks
-        })
-        impactedActivities.forEach(impactedActivity => {
-          state.activities[impactedActivity.activityid] = impactedActivity
-        })
-      }
-      // TODO : many tasks*/
     },
     delete: (state, action) => {
       console.log('sliceActivity.delete', action.payload)
@@ -235,9 +219,12 @@ const activitySlice = createSlice({
 
 export default activitySlice.reducer
 
-function updateActivity ( a, update) {
-  let reorder = false
-  let activity = {...a}
+function updateActivity(a, update) {
+  let reorder = -1
+  let activity = { ...a }
+  if (activity.availabilities === undefined) {
+    activity.availabilities = {}
+  }
   if (update.name !== undefined) {
     activity.name = update.name
     activity.availabilities.name = 'available'
@@ -245,19 +232,22 @@ function updateActivity ( a, update) {
   if (update.order !== undefined) {
     activity.order = update.order
     activity.availabilities.order = 'available'
-    reorder = true
+    reorder = update.order
   }
   if (update.description !== undefined) {
     activity.description = update.description
     activity.availabilities.description = 'available'
+  } else {
+    console.log('no description in', update)
   }
   if (update.tasks !== undefined) {
     activity.tasks = update.tasks
     activity.availabilities.tasks = 'available'
   }
+  //console.log("updateActivity", a, update, activity)
   return {
     activity: activity,
-    reorder: reorder
+    reorder: reorder,
   }
 }
 

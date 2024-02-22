@@ -8,13 +8,13 @@ import {
   IconButton,
   List,
   Collapse,
-  Divider,
+  Divider, Skeleton, ListItem
 } from '@mui/material'
 import SmsFailedIcon from '@mui/icons-material/SmsFailed'
 import LinearProgress from '@mui/material/LinearProgress'
 import { TransitionGroup } from 'react-transition-group'
 
-import Activity from '../../../_shared/Activity/Activity.js'
+import Activity from './Activity/Activity.js'
 import { serviceActivityGetMine } from '../../../_services/activity/activity.services.js'
 
 export default function MyActivities(props) {
@@ -46,103 +46,154 @@ export default function MyActivities(props) {
 
   // Selects
   const select = {
-    mine: useSelector((state) => state.activitySlice.state.getmine),
+    getmine: useSelector((state) => state.activitySlice.state.getmine),
     sortedList: useSelector((state) => state.activitySlice.sortedList),
   }
 
   // Initiates
-  if (select.mine === undefined) {
+  if (select.getmine === undefined) {
     changes.getmine()
   }
 
-  let c = -1
+  const skeleton = (
+    <Box sx={{ width: '100%' }}>
+      <List
+        dense={false}
+        sx={{
+          width: '100%',
+          p: 0,
+        }}
+      >         
+        <ListItem
+          key={"a"}
+        >
+          <Skeleton
+            variant="text"
+            width={Math.random() * 60 + 20 + '%'}
+          />
+        </ListItem>   
+        <ListItem
+          key={"b"}
+        >
+          <Skeleton
+            variant="text"
+            width={Math.random() * 60 + 20 + '%'}
+          />
+        </ListItem>   
+        <ListItem
+          key={"c"}
+        >
+          <Skeleton
+            variant="text"
+            width={Math.random() * 60 + 20 + '%'}
+          />
+        </ListItem>   
+      </List>
+    </Box>
+  )
 
+  let c = -1
   return (
     <Box
-      data-testid="component-my activities"
       sx={{
+        width: '100%',
+        m: 0,
+        p: 0,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        left: '5%',
-        width: '90%',
-        right: '5%',
       }}
     >
-      {select.mine !== 'available' ? (
-        <Box sx={{ width: '1' }}>
+      {select.getmine !== 'available' || select.sortedList === undefined ? (
+        <Box sx={{ width: '100%' }}>
           <LinearProgress />
         </Box>
-      ) : select.sortedList.length === 0 ? (
+      ) : (
         <Box
+          data-testid="component-my activities"
           sx={{
-            m: 2,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            left: '5%',
+            width: '90%',
+            right: '5%',
           }}
-          data-testid="component-my activities#box-no activity note"
         >
-          <Typography
-            sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line' }}
-            variant="h6"
-            component="span"
-            align="center"
-          >
-            {t('home.label.noActivity')}
-          </Typography>
-          <SmsFailedIcon
-            sx={{ mt: 2, mb: 2 }}
-            fontSize="large"
-            color="primary"
-          />
-          <Typography
-            sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line' }}
-            variant="body1"
-            component="span"
-            align="center"
-          >
-            {t('home.label.noActivityExplanation')}
-          </Typography>
+          {select.getmine !== 'available' ? (
+            skeleton
+          ) : select.sortedList.length === 0 ? (
+            <Box
+              sx={{
+                m: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+              data-testid="component-my activities#box-no activity note"
+            >
+              <Typography
+                sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line' }}
+                variant="h6"
+                component="span"
+                align="center"
+              >
+                {t('home.label.noActivity')}
+              </Typography>
+              <SmsFailedIcon
+                sx={{ mt: 2, mb: 2 }}
+                fontSize="large"
+                color="primary"
+              />
+              <Typography
+                sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line' }}
+                variant="body1"
+                component="span"
+                align="center"
+              >
+                {t('home.label.noActivityExplanation')}
+              </Typography>
+            </Box>
+          ) : (
+            <List
+              dense={false}
+              data-testid="component-my activities#list-activities"
+              sx={{
+                width: '100%',
+                p: 0,
+              }}
+            >
+              <TransitionGroup>
+                {select.sortedList.map((activity) => {
+                  c += 1
+                  return (
+                    <Collapse
+                      sx={{
+                        width: '100%',
+                        m: 0,
+                        p: 0,
+                      }}
+                      key={'activityid-' + activity.activityid}
+                    >
+                      <Activity
+                        zoomLevel={props.zoomLevel}
+                        activityid={activity.activityid}
+                        index={c}
+                        dragging={dragging}
+                        drag={changes.drag}
+                      />
+                      <Divider
+                        variant="middle"
+                        component="li"
+                        sx={{ m: 0, p: 0 }}
+                      />
+                    </Collapse>
+                  )
+                })}
+              </TransitionGroup>
+            </List>
+          )}
         </Box>
-      ) : (
-        <List
-          dense={false}
-          data-testid="component-my activities#list-activities"
-          sx={{
-            width: '100%',
-            p: 0,
-          }}
-        >
-          <TransitionGroup>
-            {select.sortedList.map((activity) => {
-              c += 1
-              return (
-                <Collapse
-                  sx={{
-                    width: '100%',
-                    m: 0,
-                    p: 0,
-                  }}
-                  key={'activityid-' + activity.activityid}
-                >
-                  <Activity
-                    zoomLevel={props.zoomLevel}
-                    activityid={activity.activityid}
-                    index={c}
-                    dragging={dragging}
-                    drag={changes.drag}
-                  />
-                  <Divider
-                    variant="middle"
-                    component="li"
-                    sx={{ m: 0, p: 0 }}
-                  />
-                </Collapse>
-              )
-            })}
-          </TransitionGroup>
-        </List>
       )}
     </Box>
   )

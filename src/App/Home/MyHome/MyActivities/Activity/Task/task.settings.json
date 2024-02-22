@@ -1,0 +1,67 @@
+{
+  "requirements": {
+    "0": {
+      "name": {
+        "variant": "body1"
+      },
+      "state": {
+        "variant": "body1"
+      }
+    },
+    "1": {
+      "name": {
+        "variant": "body1"
+      },
+      "state": {
+        "variant": "body1"
+      }
+    },
+    "2": {
+      "name": {
+        "variant": "body1"
+      },
+      "description": {
+        "variant": "body1",
+        "multiline": false,
+        "maxRows": 1,
+        "hidden": false
+      },
+      "state": {
+        "variant": "body1"
+      },
+      "reminderType": {
+        "variant": "body1"
+      }
+    }
+  },
+  "values": {
+    "state": [
+      {
+        "label": "generic.label.tothink",
+        "value": "tothink"
+      },
+      {
+        "label": "generic.label.todo",
+        "value": "todo"
+      },
+      {
+        "label": "generic.label.wip",
+        "value": "wip"
+      },
+      {
+        "label": "generic.label.done",
+        "value": "done"
+      }
+    ],
+    "reminderType": [
+      {
+        "label": "generic.label.oneshot",
+        "value": "oneshot"
+      },
+      {
+        "label": "generic.label.recurring",
+        "value": "recurring"
+      }
+    ]
+  }
+}

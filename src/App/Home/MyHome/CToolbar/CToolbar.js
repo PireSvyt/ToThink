@@ -14,7 +14,8 @@ import ViewStreamIcon from '@mui/icons-material/ViewStream'
 import ArticleIcon from '@mui/icons-material/Article'
 
 import appStore from '../../../store.js'
-import { serviceActivityGetMany } from '../../../_services/activity/activity.services.js'
+import { serviceActivityDig } from '../../../_services/activity/activity.services.js'
+import { serviceTaskDig } from '../../../_services/task/task.services.js'
 
 export default function CToolbar(props) {
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
@@ -52,16 +53,32 @@ export default function CToolbar(props) {
 
   // Changes
   let changes = {
-    set: (e, val) => {
-      if (val !== null) {
-        if (val !== '0') {
-          console.log('CToolbar.set', val)
-          serviceActivityGetMany({
+    set: async (e, val) => {
+      switch (val) {
+        case '0':
+          // get mine
+          break
+        case '1':
+          console.log('DIG ACTIVITIES')
+          serviceActivityDig({
+            //activityids: [ LIST OF ACTIVITY IDS TO GET / OTHERWISE ALL ],
             requirements: ['name', 'description', 'tasks', 'order'],
           })
-        }
-        props.set(val)
+          break
+        case '2':
+          //console.log("DIG ACTIVITIES")
+          serviceActivityDig({
+            //activityids: [ LIST OF ACTIVITY IDS TO GET / OTHERWISE ALL ],
+            requirements: ['name', 'description', 'tasks', 'order'],
+          })
+          //console.log("DIG TASKS")
+          serviceTaskDig({
+            //taskids: [ LIST OF TASK IDS TO GET / OTHERWISE ALL ],
+            requirements: ['name', 'description', 'state', 'order'],
+          })
+          break
       }
+      props.set(val)
     },
     new: (item) => {
       switch (item) {

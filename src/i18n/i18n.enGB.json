@@ -9,7 +9,8 @@
       "tothink": "tothink",
       "todo": "todo",
       "wip": "wip",
-      "done": "done"
+      "done": "done",
+      "tasks": "tothinks"
     },
     "menu": {
       "home": "Home",

@@ -7,6 +7,7 @@ import {
   activityGetManyInputs,
   activityGetMineInputs,
   activityOrderInputs,
+  activityDigInputs,
 } from './activity.services.inputs.js'
 // Services
 import serviceProceed from '../_services/serviceProceed.js'
@@ -59,4 +60,11 @@ export async function serviceActivityOrder(directInputs) {
     console.log('serviceActivityOrder')
   }
   await serviceProceed(activityOrderInputs, directInputs)
+}
+
+export async function serviceActivityDig(directInputs) {
+  if (process.env.REACT_APP_DEBUG === 'TRUE') {
+    console.log('serviceActivityDig')
+  }
+  await serviceProceed(activityDigInputs, directInputs)
 }

@@ -9,10 +9,11 @@ import {
   Skeleton,
 } from '@mui/material'
 
-export default function Editable(props) {
+export default function Selectable(props) {
   /**
  * PROPS
-    value={select.activity} 
+    value={select.activity}
+    values={settings.values} 
     field={'name'}
     changes={changes}
     settings={activitySettings[props.zoomLevel]}
@@ -20,7 +21,7 @@ export default function Editable(props) {
  */
 
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
-    //console.log('Editable')
+    //console.log('Selectable')
   }
 
   // i18n
@@ -49,8 +50,18 @@ export default function Editable(props) {
         })
       }
     },
+    onclick: async (value) => {
+      if (props.value[props.field] !== value) {
+        setSaving(true)
+        await props.changes.save({
+          field: props.field,
+          value: value,
+        })
+        setSaving(false)
+      }
+    },
     save: async () => {
-      /*console.log('Editable.save', props.field)
+      /*console.log('Selectable.save', props.field)
       console.log('"'+initialValue+'" initial')
       console.log('"'+props.value[props.field]+'" new')*/
       if (initialValue !== props.value[props.field]) {
@@ -124,42 +135,54 @@ export default function Editable(props) {
                       }}
                       hidden={getSetting('hidden', false)}
                     >
-                      {props.value === undefined ||
-                      props.value[props.field] === undefined ? null : (
-                        <Box sx={{ width: '100%' }}>
-                          {props.value.availabilities === undefined ? null : (
-                            <Box sx={{ width: '100%' }}>
-                              {props.value.availabilities[props.field] !== 'available' ? (
-                                <Box sx={{ width: '100%' }}>
-                                  <Skeleton
-                                    variant="text"
-                                    sx={{ typography: getSetting('variant', 'body1') }}
-                                  />
-                                  <Skeleton
-                                    variant="text"
-                                    sx={{ typography: getSetting('variant', 'body1') }}
-                                    width={Math.random() * 100 + '%'}
-                                  />
-                                </Box>
-                              ) : (
-                                <Input
-                                  data-testid={props.prefix + "#input-" + props.field}
-                                  multiline
-                                  fullWidth
-                                  size="small"
-                                  value={props.value[props.field]}
-                                  placeholder={t(props.field)}
-                                  variant="standard"
-                                  onChange={changes.edit}
-                                  onBlur={changes.save}
-                                  sx={{ typography: getSetting('variant', 'body1') }}
-                                  disabled={getSetting('disabled', false)}
-                                />
-                              )}
+                        {props.value === undefined &&
+                        props.value[props.field] === undefined ? null : (
+                        <Select
+                            data-testid={props.prefix + '#list-' + props.field}
+                            size="small"
+                            value={props.value[props.field]}
+                            label={t(props.field)}
+                            variant="standard"
+                            disabled={getSetting('disabled', false)}
+                            onChange={changes.edit}
+                            onBlur={changes.save}
+                            renderValue={(val) => {
+                            return (
+                                <Typography variant={getSetting('variant', 'body1')}>
+                                {t('generic.label.' + val)}
+                                </Typography>
+                            )
+                            }}
+                        >
+                            {props.values[props.field] === undefined ? null : (
+                            <Box>
+                                {props.values[props.field].map((item) => {
+                                c += 1
+                                return (
+                                    <MenuItem
+                                    data-testid={
+                                        props.prefix +
+                                        '#list-' +
+                                        props.field +
+                                        '#listitem-' +
+                                        c
+                                    }
+                                    key={item.value}
+                                    onClick={() => changes.onclick(item.value)}
+                                    hidden={item.hidden === true}
+                                    disabled={item.disabled === true}
+                                    dense
+                                    >
+                                    <Typography variant={getSetting('variant', 'body1')}>
+                                        {t('generic.label.' + item.value)}
+                                    </Typography>
+                                    </MenuItem>
+                                )
+                                })}
                             </Box>
-                          )}
-                        </Box>
-                      )}
+                            )}
+                        </Select>
+                        )}
                     </Box>
                   )}
                 </Box>

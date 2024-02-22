@@ -5,6 +5,7 @@ import {
   taskDeleteInputs,
   taskGetOneInputs,
   taskGetManyInputs,
+  taskDigInputs,
 } from './task.services.inputs.js'
 // Services
 import serviceProceed from '../_services/serviceProceed.js'
@@ -42,4 +43,11 @@ export async function serviceTaskGetMany(directInputs) {
     console.log('serviceTaskGetMany')
   }
   await serviceProceed(taskGetManyInputs, directInputs)
+}
+
+export async function serviceTaskDig(directInputs) {
+  if (process.env.REACT_APP_DEBUG === 'TRUE') {
+    console.log('serviceTaskDig')
+  }
+  await serviceProceed(taskDigInputs, directInputs)
 }

@@ -502,9 +502,9 @@ export const activityGetManyInputs = {
       tags: ['function'],
     })
     let responses = {
-      'activities.getmany.success': () => {
+      'activity.getmany.success': () => {
         appStore.dispatch({
-          type: 'activitySlice/getmany',
+          type: 'activitySlice/update',
           payload: {
             activities: response.data.activities,
           },
@@ -516,18 +516,7 @@ export const activityGetManyInputs = {
           },
         })
       },
-      'activities.getmany.error.undefined': () => {
-        console.warn(
-          'getmanageresponsefunction activity.getone.error.undefined'
-        )
-        appStore.dispatch({
-          type: 'activitySlice/change',
-          payload: {
-            state: {
-              getmany: 'available',
-            },
-          },
-        })
+      'activity.getmany.error.notfound': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -536,16 +525,7 @@ export const activityGetManyInputs = {
           },
         })
       },
-      'activity.getone.error.onfind': () => {
-        console.warn('getmanageresponsefunction activity.getone.error.onfind')
-        appStore.dispatch({
-          type: 'activitySlice/change',
-          payload: {
-            state: {
-              getmany: 'available',
-            },
-          },
-        })
+      'activity.getmany.error.onfind': () => {
         appStore.dispatch({
           type: 'sliceSnack/change',
           payload: {
@@ -620,21 +600,15 @@ export const activityGetMineInputs = {
       tags: ['function'],
     })
     let responses = {
-      'activities.getmine.success': () => {
+      'activity.getmine.success': () => {
         appStore.dispatch({
           type: 'activitySlice/mine',
           payload: {
             activities: response.data.activities,
           },
         })
-        appStore.dispatch({
-          type: 'activitySlice/store',
-          payload: {
-            activities: response.data.activities,
-          },
-        })
       },
-      'activities.getmine.error.undefined': () => {
+      'activity.getmine.error.undefined': () => {
         console.warn(
           'getmanageresponsefunction activity.getone.error.undefined'
         )
@@ -673,7 +647,7 @@ export const activityGetMineInputs = {
         })
       },
     }
-    //console.log("WHAT IS THE response.type : " + response.type)
+    //console.log("WHAT IS THE response.type : ", response)
     return responses[response.type]()
   },
 }
@@ -797,6 +771,140 @@ export const activityOrderInputs = {
       },
     }
     //console.log("activityOrderInputs response", response)
+    return responses[response.type]()
+  },
+}
+
+export const activityDigInputs = {
+  getinputsfunction: (log, directInputs) => {
+    log.push({
+      date: new Date(),
+      message: 'activityDigInputs.getinputsfunction',
+      tags: ['function'],
+    })
+    //console.log('directInputs', directInputs)
+    let activitiesToUpdate = []
+    if (
+      appStore.getState().activitySlice.sortedList.length !== 0 &&
+      Object.entries(appStore.getState().activitySlice.activities).length !== 0
+    ) {
+      // Gather activities
+      let activities = {}
+      if (directInputs.activityids !== undefined) {
+        directInputs.activityids.forEach((activityid) => {
+          activities[activityid] =
+            appStore.getState().activitySlice.activities[activityid]
+        })
+      } else {
+        activities = { ...appStore.getState().activitySlice.activities }
+      }
+      // Check activities meet requirements
+      Object.keys(activities).forEach((activityid) => {
+        let activityMeetsRequirements = true
+        directInputs.requirements.forEach((requirement) => {
+          if (
+            Object.keys(activities[activityid]).includes(requirement) === false
+          ) {
+            activityMeetsRequirements = false
+          }
+        })
+        if (activityMeetsRequirements === false) {
+          activitiesToUpdate.push(activityid)
+        }
+      })
+    } else {
+      console.log('DIG WITHOUT LIST')
+    }
+
+    return {
+      inputs: {
+        activityids: activitiesToUpdate,
+        requirements: directInputs.requirements,
+      },
+    }
+  },
+  sercivechecks: [
+    {
+      // Check inputs root is available
+      field: 'inputs',
+      error: 'generic.error.missinginputs',
+      subchecks: [
+        {
+          // Check activityids are available
+          field: 'activityids',
+          error: 'generic.error.missingactivityids',
+          fieldsinerror: ['activityids'],
+        },
+      ],
+    },
+  ],
+  getcheckoutcomedispatchfunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityDigInputs.getcheckoutcomedispatchfunction',
+      tags: ['function'],
+    })
+    return 'activitySlice/change'
+  },
+  apicall: async (inputs, log) => {
+    //console.log('apicall inputs', inputs)
+    log.push({
+      date: new Date(),
+      message: 'activityDigInputs.apicall',
+      inputs: inputs,
+      tags: ['function'],
+    })
+    try {
+      return await apiActivityGetMany(
+        inputs,
+        appStore.getState().authSlice.token
+      )
+    } catch (err) {
+      return err
+    }
+  },
+  getmanageresponsefunction: (response, log) => {
+    log.push({
+      date: new Date(),
+      message: 'activityDigInputs.getmanageresponsefunction',
+      response: response,
+      tags: ['function'],
+    })
+    let responses = {
+      'activity.getmany.success': () => {
+        appStore.dispatch({
+          type: 'activitySlice/update',
+          payload: {
+            activities: response.data.activities,
+          },
+        })
+        appStore.dispatch({
+          type: 'taskSlice/update',
+          payload: {
+            activities: response.data.activities,
+          },
+        })
+      },
+      'activity.getmany.error.notfound': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+      'activity.getmany.error.onfind': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+    }
+    //console.log("activityDigInputs response", response)
     return responses[response.type]()
   },
 }

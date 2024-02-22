@@ -32,9 +32,9 @@ export default function WelcomeCarousel() {
         alignItems: 'center',
       }}
     >
-      <Typography 
-        sx={{ 
-          whiteSpace: 'pre-line'
+      <Typography
+        sx={{
+          whiteSpace: 'pre-line',
         }}
       >
         {t('home.label.carousel1')}

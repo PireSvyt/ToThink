@@ -421,4 +421,206 @@ export const taskGetOneInputs = {
   },
 }
 
-export const taskGetManyInputs = {}
+export const taskGetManyInputs = {
+  lockuifunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskGetManyInputs.lockuifunction',
+      tags: ['function'],
+    })
+    appStore.dispatch({
+      type: 'tasksSlice/getmany',
+      payload: {
+        state: 'wip',
+        requirements: ['name', 'description', 'state', 'order'],
+      },
+    })
+  },
+  getinputsfunction: (log, directInputs) => {
+    log.push({
+      date: new Date(),
+      message: 'taskGetManyInputs.getinputsfunction',
+      tags: ['function'],
+    })
+    let inputs = {}
+    if (directInputs.taskids !== undefined) {
+      inputs.taskids = directInputs.taskids
+    }
+    if (directInputs.requirements !== undefined) {
+      inputs.requirements = directInputs.requirements
+    }
+    return {
+      inputs: inputs,
+    }
+  },
+  sercivechecks: [
+    {
+      // Check inputs root is available
+      field: 'inputs',
+      error: 'generic.error.missinginputs',
+    },
+  ],
+  apicall: async (inputs, log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskGetManyInputs.apicall',
+      inputs: inputs,
+      tags: ['function'],
+    })
+    try {
+      return await apiTaskGetMany(inputs, appStore.getState().authSlice.token)
+    } catch (err) {
+      return err
+    }
+  },
+  getmanageresponsefunction: (response, log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskGetManyInputs.getmanageresponsefunction',
+      response: response,
+      tags: ['function'],
+    })
+    let responses = {
+      'task.getmany.success': () => {
+        appStore.dispatch({
+          type: 'taskSlice/update',
+          payload: {
+            tasks: response.data.tasks,
+          },
+        })
+      },
+      'task.getmany.error.notfound': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+      'task.getmany.error.onfind': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+    }
+    //console.log("WHAT IS THE response.type : " + response.type)
+    return responses[response.type]()
+  },
+}
+
+export const taskDigInputs = {
+  getinputsfunction: (log, directInputs) => {
+    log.push({
+      date: new Date(),
+      message: 'taskDigInputs.getinputsfunction',
+      tags: ['function'],
+    })
+    //console.log('directInputs', directInputs)
+    let tasksToUpdate = []
+    if (Object.keys(appStore.getState().taskSlice.tasks).length !== 0) {
+      // Gather tasks
+      let tasks = {}
+      if (directInputs.taskids !== undefined) {
+        directInputs.taskids.forEach((taskid) => {
+          tasks[taskid] = appStore.getState().taskSlice.tasks[taskid]
+        })
+      } else {
+        tasks = { ...appStore.getState().taskSlice.tasks }
+      }
+      // Check tasks meet requirements
+      Object.keys(tasks).forEach((taskid) => {
+        let taskMeetsRequirements = true
+        directInputs.requirements.forEach((requirement) => {
+          if (Object.keys(tasks[taskid]).includes(requirement) === false) {
+            taskMeetsRequirements = false
+          }
+        })
+        if (taskMeetsRequirements === false) {
+          tasksToUpdate.push(taskid)
+        }
+      })
+    } else {
+      console.log('DIG WITHOUT LIST')
+    }
+
+    return {
+      inputs: {
+        taskids: tasksToUpdate,
+        requirements: directInputs.requirements,
+      },
+    }
+  },
+  sercivechecks: [
+    {
+      // Check inputs root is available
+      field: 'inputs',
+      error: 'generic.error.missinginputs',
+      subchecks: [],
+    },
+  ],
+  getcheckoutcomedispatchfunction: (log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskDigInputs.getcheckoutcomedispatchfunction',
+      tags: ['function'],
+    })
+    return 'taskSlice/change'
+  },
+  apicall: async (inputs, log) => {
+    //console.log('apicall inputs', inputs)
+    log.push({
+      date: new Date(),
+      message: 'taskDigInputs.apicall',
+      inputs: inputs,
+      tags: ['function'],
+    })
+    try {
+      return await apiTaskGetMany(inputs, appStore.getState().authSlice.token)
+    } catch (err) {
+      return err
+    }
+  },
+  getmanageresponsefunction: (response, log) => {
+    log.push({
+      date: new Date(),
+      message: 'taskDigInputs.getmanageresponsefunction',
+      response: response,
+      tags: ['function'],
+    })
+    let responses = {
+      'task.getmany.success': () => {
+        appStore.dispatch({
+          type: 'taskSlice/update',
+          payload: {
+            tasks: response.data.tasks,
+          },
+        })
+      },
+      'task.getmany.error.notfound': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+      'task.getmany.error.onfind': () => {
+        appStore.dispatch({
+          type: 'sliceSnack/change',
+          payload: {
+            uid: random_id(),
+            id: 'generic.snack.error.wip',
+          },
+        })
+      },
+    }
+    //console.log("taskDigInputs response", response)
+    return responses[response.type]()
+  },
+}

@@ -2,14 +2,15 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Box,
-  Typography,
-  MenuItem,
-  Input,
-  Select,
   Skeleton,
 } from '@mui/material'
 
-export default function Editable(props) {
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+export default function DatePickable(props) {
   /**
  * PROPS
     value={select.activity} 
@@ -20,7 +21,7 @@ export default function Editable(props) {
  */
 
   if (process.env.REACT_APP_DEBUG === 'TRUE') {
-    //console.log('Editable')
+    //console.log('DatePickable')
   }
 
   // i18n
@@ -50,7 +51,7 @@ export default function Editable(props) {
       }
     },
     save: async () => {
-      /*console.log('Editable.save', props.field)
+      /*console.log('DatePickable.save', props.field)
       console.log('"'+initialValue+'" initial')
       console.log('"'+props.value[props.field]+'" new')*/
       if (initialValue !== props.value[props.field]) {
@@ -142,19 +143,14 @@ export default function Editable(props) {
                                   />
                                 </Box>
                               ) : (
-                                <Input
-                                  data-testid={props.prefix + "#input-" + props.field}
-                                  multiline
-                                  fullWidth
-                                  size="small"
-                                  value={props.value[props.field]}
-                                  placeholder={t(props.field)}
-                                  variant="standard"
-                                  onChange={changes.edit}
-                                  onBlur={changes.save}
-                                  sx={{ typography: getSetting('variant', 'body1') }}
-                                  disabled={getSetting('disabled', false)}
-                                />
+                                <LocalizationProvider 
+                                    dateAdapter={AdapterDayjs}
+                                >
+                                    <DatePicker
+                                        data-testid={props.prefix + "#datepicker-" + props.field}
+                                        defaultValue={dayjs('2022-04-17')} 
+                                    />
+                                </LocalizationProvider>
                               )}
                             </Box>
                           )}
